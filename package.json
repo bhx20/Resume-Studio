@@ -4,6 +4,7 @@
   "description": "Local offline-first Resume & Profile Management Studio for Sanket Kalathiya",
   "main": "src/server.js",
   "scripts": {
+    "build": "node scripts/build.js",
     "start": "node src/server.js",
     "dev": "node src/server.js",
     "test": "node tests/resume.test.js"

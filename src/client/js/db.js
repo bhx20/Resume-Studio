@@ -50,6 +50,26 @@ async function loadDefaultSourceData() {
   }
 
   try {
+    const res = await fetch('/data/resume-data.json');
+    if (res.ok) {
+      const parsed = await res.json();
+      DEFAULT_RESUME_DATA = parsed;
+      window.DEFAULT_RESUME_DATA = parsed;
+      return normalizeResumeData(parsed);
+    }
+  } catch (_) {}
+
+  try {
+    const res = await fetch('data/resume-data.json');
+    if (res.ok) {
+      const parsed = await res.json();
+      DEFAULT_RESUME_DATA = parsed;
+      window.DEFAULT_RESUME_DATA = parsed;
+      return normalizeResumeData(parsed);
+    }
+  } catch (_) {}
+
+  try {
     const res = await fetch('../src/data/resume-data.json');
     if (res.ok) {
       const parsed = await res.json();
@@ -58,7 +78,7 @@ async function loadDefaultSourceData() {
       return normalizeResumeData(parsed);
     }
   } catch (e) {
-    console.error('Failed to load resume data from src/data/resume-data.json:', e);
+    console.error('Failed to load resume data from static sources:', e);
   }
 
   return DEFAULT_RESUME_DATA ? normalizeResumeData(DEFAULT_RESUME_DATA) : {};
