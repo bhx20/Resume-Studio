@@ -430,6 +430,10 @@ function createDocx(raw) {
       {
         properties: {
           page: {
+            size: {
+              width: 11906, // 210mm (A4)
+              height: 16838 // 297mm (A4)
+            },
             margin: {
               top: 504, // 0.35 in
               right: 648, // 0.45 in

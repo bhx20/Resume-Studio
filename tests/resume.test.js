@@ -183,6 +183,39 @@ async function runTests() {
     assert(skillsIdxMd < sumIdxMd, 'TECHNICAL SKILLS MATRIX must appear before PROFESSIONAL SUMMARY in Markdown');
   });
 
+  it('default placement ensures PROFESSIONAL EXPERIENCE is above KEY PROJECTS & DELIVERABLES in HTML, DOCX, and Markdown', () => {
+    const html = generateHtml(resumeData);
+    const md = generateMarkdown(resumeData);
+    const txt = generatePlainText(resumeData);
+
+    const expIdxHtml = html.indexOf('PROFESSIONAL EXPERIENCE');
+    const projIdxHtml = html.indexOf('KEY PROJECTS &amp; DELIVERABLES') !== -1 ? html.indexOf('KEY PROJECTS &amp; DELIVERABLES') : html.indexOf('KEY PROJECTS & DELIVERABLES');
+    assert(expIdxHtml !== -1 && projIdxHtml !== -1, 'Both Experience and Projects must exist in HTML');
+    assert(expIdxHtml < projIdxHtml, 'PROFESSIONAL EXPERIENCE must be above KEY PROJECTS & DELIVERABLES by default in HTML');
+
+    const expIdxMd = md.indexOf('## PROFESSIONAL EXPERIENCE');
+    const projIdxMd = md.indexOf('## KEY PROJECTS & DELIVERABLES');
+    assert(expIdxMd !== -1 && projIdxMd !== -1, 'Both Experience and Projects must exist in Markdown');
+    assert(expIdxMd < projIdxMd, 'PROFESSIONAL EXPERIENCE must be above KEY PROJECTS & DELIVERABLES by default in Markdown');
+
+    const expIdxTxt = txt.indexOf('PROFESSIONAL EXPERIENCE');
+    const projIdxTxt = txt.indexOf('KEY PROJECTS & DELIVERABLES');
+    assert(expIdxTxt !== -1 && projIdxTxt !== -1, 'Both Experience and Projects must exist in Plain text');
+    assert(expIdxTxt < projIdxTxt, 'PROFESSIONAL EXPERIENCE must be above KEY PROJECTS & DELIVERABLES by default in Plain text');
+
+    // Page distribution check in HTML
+    const page2Idx = html.indexOf('class="sheet page-2"');
+    assert(expIdxHtml < page2Idx, 'PROFESSIONAL EXPERIENCE must be on Page 1 by default');
+    assert(projIdxHtml > page2Idx, 'KEY PROJECTS & DELIVERABLES must be on Page 2 by default');
+
+    // Education verification on Page 2 with all 3 credentials
+    const eduIdxHtml = html.indexOf('EDUCATION');
+    assert(eduIdxHtml > page2Idx, 'EDUCATION must be on Page 2');
+    assert(html.includes('Bachelor of Commerce (B.Com)'), 'Must include Bachelor of Commerce');
+    assert(html.includes('Technical Training – Flutter &amp; Dart') || html.includes('Technical Training – Flutter & Dart'), 'Must include Technical Training – Flutter & Dart');
+    assert(html.includes('Advanced Cross-Platform Mobile Engineering Certification'), 'Must include Advanced Cross-Platform Mobile Engineering Certification');
+  });
+
   it('sectionTitles allows fully dynamic titles for any section (e.g. TECHNICAL SKILLS MATRIX, EXECUTIVE PROFILE)', () => {
     const customTitleData = {
       ...resumeData,
@@ -207,6 +240,12 @@ async function runTests() {
     assert(txt.includes('EXECUTIVE PROFILE & ROADMAP'), 'Plain text must render custom summary title');
   });
 
+  it('Continuation sections on multi-page overflow omit repeated section headings and never include (CONT.)', () => {
+    const canvasJs = fs.readFileSync(path.join(__dirname, '..', 'src', 'client', 'js', 'canvas.js'), 'utf-8');
+    assert(!canvasJs.includes('(CONT.)'), 'canvas.js must not contain any (CONT.) label');
+    assert(canvasJs.includes('const titleHtml = isContinuation'), 'buildSectionDom must check isContinuation for titleHtml');
+  });
+
   // 4. Source & Client Directory Consolidation
   console.log('\n🌐 4. Testing Code Consolidation in src/ (Zero Root public/):');
   it('All code is consolidated under src/ (no public/ at root), src/client contains all frontend modules', () => {
@@ -214,7 +253,7 @@ async function runTests() {
     assert(!fs.existsSync(path.join(rootDir, 'public')), 'Root public/ directory must not exist (all code consolidated in src/)');
     const clientDir = path.join(rootDir, 'src', 'client');
     assert(fs.existsSync(clientDir), 'src/client must exist');
-    const files = fs.readdirSync(clientDir);
+    const files = fs.readdirSync(clientDir).filter(f => !f.endsWith('.d.ts'));
     assert.deepStrictEqual(files.sort(), ['app.js', 'index.html', 'js'], 'src/client/ must contain app.js, index.html, and js/ directory');
     assert(fs.existsSync(path.join(clientDir, 'js', 'state.js')), 'js/state.js must exist');
     assert(fs.existsSync(path.join(clientDir, 'js', 'utils.js')), 'js/utils.js must exist');

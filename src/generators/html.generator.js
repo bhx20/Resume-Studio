@@ -92,8 +92,69 @@ function generateHtml(raw) {
     ? data.sectionOrder.filter(id => !['sectionOrder', 'sectionTitles', 'titles', 'headers', 'template', 'theme', 'id', 'version', 'meta', 'metadata'].includes(id))
     : defaultOrder;
 
-  const page1Sections = order.slice(0, 3).map(id => sectionRenderers[id] ? sectionRenderers[id]() : '').join('');
-  const page2Sections = order.slice(3).map(id => sectionRenderers[id] ? sectionRenderers[id]() : '').join('');
+  // Estimate block heights for A4 pagination (usable height ~1018px)
+  const headerHtml = `
+    <header>
+      <h1>${p.name || 'Sanket Kalathiya'}</h1>
+      <div class="subtitle">${p.title || 'Lead Flutter Developer'}</div>
+      <div class="contact-line">${p.location || ''} | ${p.phone || ''} | <a href="mailto:${p.email || ''}">${p.email || ''}</a></div>
+      <div class="contact-line">LinkedIn: <a href="${p.linkedin || ''}">${p.linkedin || ''}</a> | GitHub: <a href="${p.github || ''}">${p.github || ''}</a></div>
+    </header>
+  `;
+
+  function estimateSectionHeight(id) {
+    if (id === 'summary') return 95;
+    if (id === 'skills') return 30 + ((data.skills || []).length * 27);
+    if (id === 'experience') {
+      const exps = data.experience || [];
+      const totalBullets = exps.reduce((acc, e) => acc + (e.bullets || []).length, 0);
+      return 30 + (exps.length * 55) + (totalBullets * 18);
+    }
+    if (id === 'projects') {
+      const projs = data.projects || [];
+      const totalBullets = projs.reduce((acc, pr) => acc + (pr.bullets || []).length, 0);
+      return 30 + (projs.length * 40) + (totalBullets * 18);
+    }
+    if (id === 'education') return 30 + ((data.education || []).length * 40);
+    if (id === 'achievements') return 30 + ((data.achievements || []).length * 20);
+    return 150;
+  }
+
+  const MAX_PAGE_HEIGHT = 1018;
+  const pages = [{ pageNum: 1, items: [headerHtml], height: 85 }];
+
+  order.forEach(id => {
+    if (!sectionRenderers[id]) return;
+    const sHtml = sectionRenderers[id]();
+    if (!sHtml || !sHtml.trim()) return;
+
+    const sHeight = estimateSectionHeight(id);
+    let curPage = pages[pages.length - 1];
+
+    if (curPage.height + sHeight <= MAX_PAGE_HEIGHT) {
+      curPage.items.push(sHtml);
+      curPage.height += sHeight;
+    } else {
+      if (curPage.items.length > 0) {
+        pages.push({ pageNum: pages.length + 1, items: [sHtml], height: sHeight });
+      } else {
+        curPage.items.push(sHtml);
+        curPage.height += sHeight;
+      }
+    }
+  });
+
+  // Ensure at least 2 pages exist for standard 2-page template requirements
+  if (pages.length === 1) {
+    pages.push({ pageNum: 2, items: [], height: 0 });
+  }
+
+  const sheetsHtml = pages.map(pg => `
+  <!-- PAGE ${pg.pageNum} -->
+  <main class="sheet page-${pg.pageNum}">
+    ${pg.items.join('\n    ')}
+  </main>
+  `).join('\n');
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -120,18 +181,20 @@ function generateHtml(raw) {
       text-rendering: optimizeLegibility;
     }
     .sheet {
-      width: 8.5in;
-      height: 11in;
+      width: 210mm;
+      min-height: 297mm;
+      height: 297mm;
       margin: 20px auto;
       background: #ffffff;
-      padding: 0.35in 0.45in;
+      padding: 10mm 12mm;
       box-sizing: border-box;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       page-break-after: always;
       break-after: page;
       overflow: hidden;
+      position: relative;
     }
-    .sheet.page-2 {
+    .sheet:last-child {
       page-break-after: auto;
       break-after: auto;
     }
@@ -279,18 +342,31 @@ function generateHtml(raw) {
         padding: 0;
       }
       .sheet {
-        margin: 0;
+        margin: 0 auto;
         box-shadow: none;
-        width: 8.5in;
-        height: 11in;
-      }
-      .sheet.page-1 {
+        width: 210mm;
+        min-height: 297mm;
+        height: 297mm;
+        padding: 10mm 12mm;
         page-break-after: always;
         break-after: page;
+        box-sizing: border-box;
       }
-      .sheet.page-2 {
+      .sheet:last-child {
         page-break-after: auto;
         break-after: auto;
+      }
+      .exp-entry, .proj-entry, .edu-entry, .skill-line, ul.bullets li, article {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      h1, h2, h3, .section-title, .role-heading, .proj-heading {
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 0;
       }
       a {
         text-decoration: none;
@@ -300,22 +376,7 @@ function generateHtml(raw) {
   </style>
 </head>
 <body>
-  <!-- PAGE 1 -->
-  <main class="sheet page-1">
-    <header>
-      <h1>${p.name || 'Sanket Kalathiya'}</h1>
-      <div class="subtitle">${p.title || 'Lead Flutter Developer'}</div>
-      <div class="contact-line">${p.location || ''} | ${p.phone || ''} | <a href="mailto:${p.email || ''}">${p.email || ''}</a></div>
-      <div class="contact-line">LinkedIn: <a href="${p.linkedin || ''}">${p.linkedin || ''}</a> | GitHub: <a href="${p.github || ''}">${p.github || ''}</a></div>
-    </header>
-
-    ${page1Sections}
-  </main>
-
-  <!-- PAGE 2 -->
-  <main class="sheet page-2">
-    ${page2Sections}
-  </main>
+  ${sheetsHtml}
 </body>
 </html>`;
 }

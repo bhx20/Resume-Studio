@@ -185,5 +185,13 @@
       "grade": "Excellence Honors",
       "bullets": []
     }
+  ],
+  "sectionOrder": [
+    "summary",
+    "skills",
+    "experience",
+    "projects",
+    "achievements",
+    "education"
   ]
 }

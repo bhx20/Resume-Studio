@@ -183,8 +183,27 @@ function normalizeResumeData(raw) {
     }
   });
 
+  // Section Order normalization (PROFESSIONAL EXPERIENCE above PROJECTS by default)
+  const defaultOrder = ['summary', 'skills', 'experience', 'projects', 'achievements', 'education'];
+  normalized.customSections.forEach(cs => {
+    if (!defaultOrder.includes(cs.key) && !['sectionOrder', 'sectionTitles', 'titles', 'headers', 'template', 'theme', 'id', 'version', 'meta', 'metadata'].includes(cs.key)) {
+      defaultOrder.push(cs.key);
+    }
+  });
+
+  if (Array.isArray(raw.sectionOrder) && raw.sectionOrder.length > 0) {
+    const userOrder = raw.sectionOrder.filter(id => defaultOrder.includes(id) && !['sectionOrder', 'sectionTitles', 'titles', 'headers', 'template', 'theme', 'id', 'version', 'meta', 'metadata'].includes(id));
+    defaultOrder.forEach(id => {
+      if (!userOrder.includes(id)) userOrder.push(id);
+    });
+    normalized.sectionOrder = userOrder;
+  } else {
+    normalized.sectionOrder = defaultOrder;
+  }
+
   return normalized;
 }
+window.normalizeResumeData = normalizeResumeData;
 
 function getCandidateFilename(data, ext) {
   const p = data?.personal || {};
@@ -193,6 +212,7 @@ function getCandidateFilename(data, ext) {
   const cleanExt = ext.startsWith('.') ? ext.slice(1) : ext;
   return `${sanitized}_Resume.${cleanExt}`;
 }
+window.getCandidateFilename = getCandidateFilename;
 
 function autoResizeTextarea(el) {
   if (!el) return;

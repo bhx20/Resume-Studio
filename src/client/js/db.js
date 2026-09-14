@@ -33,6 +33,7 @@ const LocalResumeDatabase = {
     }
   }
 };
+window.LocalResumeDatabase = LocalResumeDatabase;
 
 // Asynchronously loads default data directly from src/data/resume-data.json (Single Source of Truth)
 async function loadDefaultSourceData() {
@@ -79,11 +80,18 @@ async function loadData() {
   }
   if (resumeData && Array.isArray(resumeData.sectionOrder)) {
     resumeData.sectionOrder = resumeData.sectionOrder.filter(k => !['sectionOrder', 'sectionTitles', 'titles', 'headers', 'template', 'theme', 'id', 'version', 'meta', 'metadata'].includes(k));
+    // Default placement migration: ensure PROFESSIONAL EXPERIENCE is above PROJECTS
+    const pIdx = resumeData.sectionOrder.indexOf('projects');
+    const eIdx = resumeData.sectionOrder.indexOf('experience');
+    if (pIdx !== -1 && eIdx !== -1 && pIdx < eIdx && !resumeData._reorderedByUser) {
+      resumeData.sectionOrder.splice(eIdx, 1);
+      resumeData.sectionOrder.splice(pIdx, 0, 'experience');
+    }
   }
-  // If education is empty or missing in local database, auto-heal from default source data
-  if (!resumeData.education || !Array.isArray(resumeData.education) || resumeData.education.length === 0) {
+  // If education is empty or missing credentials in local database, auto-heal from default source data
+  if (!resumeData.education || !Array.isArray(resumeData.education) || resumeData.education.length < 3) {
     const defaultData = await loadDefaultSourceData();
-    if (defaultData && Array.isArray(defaultData.education) && defaultData.education.length > 0) {
+    if (defaultData && Array.isArray(defaultData.education) && defaultData.education.length >= 3) {
       resumeData.education = JSON.parse(JSON.stringify(defaultData.education));
     }
   }

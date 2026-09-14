@@ -1,7 +1,7 @@
 // Resume Studio — 2-Page WYSIWYG Canvas Renderer & Section Interactions
 
 function getValidSectionOrder() {
-  const baseOrder = ['summary', 'skills', 'projects', 'experience', 'achievements', 'education'];
+  const baseOrder = ['summary', 'skills', 'experience', 'projects', 'achievements', 'education'];
   (resumeData.customSections || []).forEach(cs => {
     if (cs && cs.key && !baseOrder.includes(cs.key) && !['sectionOrder', 'sectionTitles', 'titles', 'headers', 'template', 'theme', 'id', 'version', 'meta', 'metadata'].includes(cs.key)) {
       baseOrder.push(cs.key);
@@ -29,6 +29,7 @@ window.jumpCurrentSection = function(toIdx) {
   const [item] = order.splice(fromIdx, 1);
   order.splice(toIdx, 0, item);
   resumeData.sectionOrder = [...order];
+  resumeData._reorderedByUser = true;
   scheduleRender();
   if (typeof updateSectionHeadingEditor === 'function') {
     updateSectionHeadingEditor(currentActiveSectionId);
@@ -95,20 +96,126 @@ function renderCustomSectionHtml(cs, escape = escapeHtml, titleOverride = null) 
 }
 window.renderCustomSectionHtml = renderCustomSectionHtml;
 
-// Render Pages (100% WYSIWYG match with server.js generateHtml)
+function renderCustomSectionBodyHtml(cs, escape = escapeHtml) {
+  const data = cs.data;
+  if (!data) return '';
+
+  if (Array.isArray(data)) {
+    if (data.length === 0) return '';
+    if (typeof data[0] === 'string') {
+      return `
+        <ul class="bullets">
+          ${data.map(item => `<li>${escape(item)}</li>`).join('')}
+        </ul>
+      `;
+    } else if (typeof data[0] === 'object') {
+      return data.map(item => {
+        const itemTitle = item.title || item.name || item.role || '';
+        const itemMeta = item.issuer || item.institution || item.period || item.date || item.level || '';
+        const bullets = Array.isArray(item.bullets) ? item.bullets : [];
+        const desc = item.description || item.desc || '';
+        return `
+          <div style="margin-top: 3px; margin-bottom: 3px;">
+            ${itemTitle ? `<h3 class="role-heading bold" style="margin-bottom:0;">${escape(itemTitle)}${itemMeta ? ` <span class="proj-stack">| ${escape(itemMeta)}</span>` : ''}</h3>` : ''}
+            ${desc ? `<p class="summary" style="margin-top: 1px; margin-bottom: 2px;">${escape(desc)}</p>` : ''}
+            ${bullets.length > 0 ? `
+              <ul class="bullets">
+                ${bullets.map(b => `<li>${escape(b)}</li>`).join('')}
+              </ul>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+  } else if (typeof data === 'string') {
+    return `<p class="summary">${escape(data)}</p>`;
+  } else if (typeof data === 'object') {
+    return Object.entries(data).map(([k, v]) => `
+      <div class="skill-line">
+        <strong class="bold">${escape(formatSectionTitle(k))}:</strong> ${escape(Array.isArray(v) ? v.join(', ') : String(v))}
+      </div>
+    `).join('');
+  }
+  return '';
+}
+window.renderCustomSectionBodyHtml = renderCustomSectionBodyHtml;
+
+function buildSectionDom(secId, title, itemsHtml, isContinuation = false) {
+  const sec = document.createElement('section');
+  sec.className = 'resume-section';
+  if (isContinuation) {
+    sec.classList.add('resume-section-continuation');
+  }
+  sec.setAttribute('draggable', 'true');
+  sec.setAttribute('data-section-id', secId);
+
+  const mtStyle = secId === 'projects' ? 'style="margin-top:0;"' : '';
+  const titleHtml = isContinuation
+    ? ''
+    : `<h2 class="section-title" contenteditable="true" data-title-key="${escapeHtml(secId)}" ${mtStyle}>${escapeHtml(title.toUpperCase())}</h2>`;
+
+  sec.innerHTML = `
+    <div class="section-drag-handle" draggable="true" title="Drag to reorder section"><i class="fa-solid fa-grip-vertical"></i> <span class="drag-text">DRAG</span></div>
+    <span class="section-edit-badge"><i class="fa-solid fa-pen text-[8px] mr-1"></i>Edit</span>
+    ${titleHtml}
+    ${itemsHtml}
+  `;
+  return sec;
+}
+
+function createPageDom(pageIndex) {
+  const pageDiv = document.createElement('div');
+  pageDiv.className = 'resume-document-page shadow-2xl flex flex-col justify-between';
+  pageDiv.setAttribute('data-purpose', `resume-document-page-${pageIndex}`);
+  pageDiv.setAttribute('data-page-number', String(pageIndex));
+  
+  const fontSelect = document.getElementById('font-select');
+  if (fontSelect && fontSelect.value === 'serif') {
+    pageDiv.classList.add('font-serif');
+  } else {
+    pageDiv.classList.add('font-sans');
+  }
+
+  const contentDiv = document.createElement('div');
+  contentDiv.id = `page-${pageIndex}-content`;
+  contentDiv.className = 'page-content-wrapper';
+
+  const footerDiv = document.createElement('div');
+  footerDiv.className = 'page-footer border-t border-slate-200 pt-2 text-center text-[10px] text-slate-400 font-sans no-print';
+  footerDiv.style.marginTop = 'auto';
+  footerDiv.textContent = `Page ${pageIndex}`;
+
+  pageDiv.appendChild(contentDiv);
+  pageDiv.appendChild(footerDiv);
+  return { pageDiv, contentDiv, footerDiv };
+}
+
+function createDividerDom() {
+  const div = document.createElement('div');
+  div.className = 'w-[210mm] flex items-center justify-center gap-3 no-print page-break-marker';
+  div.innerHTML = `
+    <div class="flex-1 h-px bg-slate-300"></div>
+    <span class="text-[10px] font-semibold text-slate-500 bg-white border border-slate-300 px-3 py-0.5 rounded-full shadow-sm">
+      ✂️ Page Break Boundary (A4 Standard)
+    </span>
+    <div class="flex-1 h-px bg-slate-300"></div>
+  `;
+  return div;
+}
+
+// Render Pages (Dynamic Multi-Page A4 Standard with automatic overflow movement)
 function renderPages() {
-  const page1 = document.getElementById('page-1-content');
-  const page2 = document.getElementById('page-2-content');
-  if (!page1 || !page2 || !resumeData) return;
+  const container = document.getElementById('pages-container');
+  if (!container || !resumeData) return;
   const p = resumeData.personal || {};
 
-  const skillsHtml = (resumeData.skills || []).map(s => `
+  const skillsHtmlList = (resumeData.skills || []).map(s => `
     <div class="skill-line">
       <strong class="bold">${escapeHtml(s.category)}:</strong> ${escapeHtml(s.skills)}
     </div>
-  `).join('');
+  `);
 
-  const expHtml = (resumeData.experience || []).map(e => `
+  const expHtmlList = (resumeData.experience || []).map(e => `
     <article class="exp-entry">
       <h3 class="role-heading bold">${escapeHtml(e.company)} | ${escapeHtml(e.role)}</h3>
       <div class="meta">${escapeHtml(e.period)}${e.location ? ' | ' + escapeHtml(e.location) : ''}</div>
@@ -116,21 +223,21 @@ function renderPages() {
         ${(e.bullets || []).map(b => `<li>${escapeHtml(b)}</li>`).join('')}
       </ul>
     </article>
-  `).join('');
+  `);
 
-  const projHtml = (resumeData.projects || []).map(proj => `
+  const projHtmlList = (resumeData.projects || []).map(proj => `
     <article class="proj-entry">
       <h3 class="proj-heading bold">${escapeHtml(proj.title)}${proj.tech ? ' | <span class="proj-stack">' + escapeHtml(proj.tech) + '</span>' : ''}</h3>
       <ul class="bullets">
         ${(proj.bullets || []).map(b => `<li>${escapeHtml(b)}</li>`).join('')}
       </ul>
     </article>
-  `).join('');
+  `);
 
   const achievements = resumeData.achievements || [];
   const achBulletsHtml = (achievements || []).map(a => `<li>${escapeHtml(a)}</li>`).join('');
 
-  const eduHtml = (resumeData.education || []).map(edu => formatEducationHtml(edu, escapeHtml)).join('');
+  const eduHtmlList = (resumeData.education || []).map(edu => formatEducationHtml(edu, escapeHtml));
 
   const headerHtml = `
     <header class="resume-section" data-section-id="personal" title="Click to edit personal information">
@@ -146,79 +253,151 @@ function renderPages() {
     </header>
   `;
 
-  const sectionRenderers = {
-    summary: () => `
-      <section class="resume-section" draggable="true" data-section-id="summary">
-        <div class="section-drag-handle" draggable="true" title="Drag to reorder section"><i class="fa-solid fa-grip-vertical"></i> <span class="drag-text">DRAG</span></div>
-        <span class="section-edit-badge"><i class="fa-solid fa-pen text-[8px] mr-1"></i>Edit</span>
-        <h2 class="section-title" contenteditable="true" data-title-key="summary">${escapeHtml(getSectionTitle(resumeData, 'summary', 'PROFESSIONAL SUMMARY').toUpperCase())}</h2>
-        <p class="summary">${escapeHtml(resumeData.summary || '')}</p>
-      </section>
-    `,
-    skills: () => `
-      <section class="resume-section" draggable="true" data-section-id="skills">
-        <div class="section-drag-handle" draggable="true" title="Drag to reorder section"><i class="fa-solid fa-grip-vertical"></i> <span class="drag-text">DRAG</span></div>
-        <span class="section-edit-badge"><i class="fa-solid fa-pen text-[8px] mr-1"></i>Edit</span>
-        <h2 class="section-title" contenteditable="true" data-title-key="skills">${escapeHtml(getSectionTitle(resumeData, 'skills', 'TECHNICAL SKILLS MATRIX').toUpperCase())}</h2>
-        ${skillsHtml}
-      </section>
-    `,
-    experience: () => `
-      <section class="resume-section" draggable="true" data-section-id="experience">
-        <div class="section-drag-handle" draggable="true" title="Drag to reorder section"><i class="fa-solid fa-grip-vertical"></i> <span class="drag-text">DRAG</span></div>
-        <span class="section-edit-badge"><i class="fa-solid fa-pen text-[8px] mr-1"></i>Edit</span>
-        <h2 class="section-title" contenteditable="true" data-title-key="experience">${escapeHtml(getSectionTitle(resumeData, 'experience', 'PROFESSIONAL EXPERIENCE').toUpperCase())}</h2>
-        ${expHtml}
-      </section>
-    `,
-    projects: () => `
-      <section class="resume-section" draggable="true" data-section-id="projects">
-        <div class="section-drag-handle" draggable="true" title="Drag to reorder section"><i class="fa-solid fa-grip-vertical"></i> <span class="drag-text">DRAG</span></div>
-        <span class="section-edit-badge"><i class="fa-solid fa-pen text-[8px] mr-1"></i>Edit</span>
-        <h2 class="section-title" contenteditable="true" style="margin-top:0;" data-title-key="projects">${escapeHtml(getSectionTitle(resumeData, 'projects', 'KEY PROJECTS & DELIVERABLES').toUpperCase())}</h2>
-        ${projHtml}
-      </section>
-    `,
-    achievements: () => (achievements.length > 0) ? `
-      <section class="resume-section" draggable="true" data-section-id="achievements">
-        <div class="section-drag-handle" draggable="true" title="Drag to reorder section"><i class="fa-solid fa-grip-vertical"></i> <span class="drag-text">DRAG</span></div>
-        <span class="section-edit-badge"><i class="fa-solid fa-pen text-[8px] mr-1"></i>Edit</span>
-        <h2 class="section-title" contenteditable="true" data-title-key="achievements">${escapeHtml(getSectionTitle(resumeData, 'achievements', 'CORE ENGINEERING & ACHIEVEMENTS').toUpperCase())}</h2>
-        <ul class="bullets" style="margin-bottom: 8px;">
-          ${achBulletsHtml}
-        </ul>
-      </section>
-    ` : '',
-    education: () => `
-      <section class="resume-section" draggable="true" data-section-id="education">
-        <div class="section-drag-handle" draggable="true" title="Drag to reorder section"><i class="fa-solid fa-grip-vertical"></i> <span class="drag-text">DRAG</span></div>
-        <span class="section-edit-badge"><i class="fa-solid fa-pen text-[8px] mr-1"></i>Edit</span>
-        <h2 class="section-title" contenteditable="true" data-title-key="education">${escapeHtml(getSectionTitle(resumeData, 'education', 'EDUCATION').toUpperCase())}</h2>
-        ${eduHtml}
-      </section>
-    `
+  const sectionDefinitions = {
+    summary: {
+      id: 'summary',
+      defaultTitle: 'PROFESSIONAL SUMMARY',
+      items: resumeData.summary ? [`<p class="summary">${escapeHtml(resumeData.summary || '')}</p>`] : []
+    },
+    skills: {
+      id: 'skills',
+      defaultTitle: 'TECHNICAL SKILLS MATRIX',
+      items: skillsHtmlList
+    },
+    experience: {
+      id: 'experience',
+      defaultTitle: 'PROFESSIONAL EXPERIENCE',
+      items: expHtmlList
+    },
+    projects: {
+      id: 'projects',
+      defaultTitle: 'KEY PROJECTS & DELIVERABLES',
+      items: projHtmlList
+    },
+    achievements: {
+      id: 'achievements',
+      defaultTitle: 'CORE ENGINEERING & ACHIEVEMENTS',
+      items: achBulletsHtml ? [`<ul class="bullets" style="margin-bottom: 8px;">${achBulletsHtml}</ul>`] : []
+    },
+    education: {
+      id: 'education',
+      defaultTitle: 'EDUCATION',
+      items: eduHtmlList
+    }
   };
 
   (resumeData.customSections || []).forEach(cs => {
     if (cs && cs.key && !['sectionOrder', 'sectionTitles', 'titles', 'headers', 'template', 'theme', 'id', 'version', 'meta', 'metadata'].includes(cs.key)) {
-      sectionRenderers[cs.key] = () => `
-        <section class="resume-section" draggable="true" data-section-id="${cs.key}">
-          <div class="section-drag-handle" draggable="true" title="Drag to reorder section"><i class="fa-solid fa-grip-vertical"></i> <span class="drag-text">DRAG</span></div>
-          <span class="section-edit-badge"><i class="fa-solid fa-pen text-[8px] mr-1"></i>Edit</span>
-          ${renderCustomSectionHtml(cs, escapeHtml, getSectionTitle(resumeData, cs.key, cs.title))}
-        </section>
-      `;
+      sectionDefinitions[cs.key] = {
+        id: cs.key,
+        defaultTitle: cs.title || formatSectionTitle(cs.key),
+        items: [renderCustomSectionBodyHtml(cs, escapeHtml)]
+      };
     }
   });
 
+  // Re-build pages cleanly inside #pages-container
+  container.innerHTML = '';
+  let currentPageIndex = 1;
+  const p1 = createPageDom(1);
+  container.appendChild(p1.pageDiv);
+  let currentContentDiv = p1.contentDiv;
+
+  // Insert Personal Header on Page 1
+  currentContentDiv.insertAdjacentHTML('beforeend', headerHtml);
+
+  // Standard A4 usable content height: 297mm - 20mm padding - ~26px footer = ~1020px
+  const MAX_CONTENT_HEIGHT = 1014;
+
+  function placeSectionItems(secId, title, items, isContinuation = false) {
+    if (!items || items.length === 0) return;
+
+    // Test whole block
+    const secEl = buildSectionDom(secId, title, items.join(''), isContinuation);
+    currentContentDiv.appendChild(secEl);
+
+    if (currentContentDiv.scrollHeight <= MAX_CONTENT_HEIGHT) {
+      // Entire block fits cleanly on current page
+      return;
+    }
+
+    // Block overflows! If section has multiple items, check if some can fit
+    if (items.length > 1) {
+      let fitCount = items.length - 1;
+      let fitted = false;
+
+      while (fitCount >= 1) {
+        secEl.remove();
+        const testEl = buildSectionDom(secId, title, items.slice(0, fitCount).join(''), isContinuation);
+        currentContentDiv.appendChild(testEl);
+
+        if (currentContentDiv.scrollHeight <= MAX_CONTENT_HEIGHT) {
+          fitted = true;
+          break;
+        }
+        testEl.remove();
+        fitCount--;
+      }
+
+      if (fitted && fitCount >= 1) {
+        // items 0 .. fitCount-1 stay on current page.
+        // Remaining items move to next page in continuation section!
+        const remainingItems = items.slice(fitCount);
+        container.appendChild(createDividerDom());
+        currentPageIndex++;
+        const nextP = createPageDom(currentPageIndex);
+        container.appendChild(nextP.pageDiv);
+        currentContentDiv = nextP.contentDiv;
+        placeSectionItems(secId, title, remainingItems, true);
+        return;
+      }
+    }
+
+    // Not splittable or not even 1 item fits on this page
+    secEl.remove();
+
+    // If current page already has content, advance to a new page
+    if (currentContentDiv.children.length > 0) {
+      container.appendChild(createDividerDom());
+      currentPageIndex++;
+      const nextP = createPageDom(currentPageIndex);
+      container.appendChild(nextP.pageDiv);
+      currentContentDiv = nextP.contentDiv;
+    }
+
+    // Place on the new page
+    const freshSecEl = buildSectionDom(secId, title, items.join(''), isContinuation);
+    currentContentDiv.appendChild(freshSecEl);
+
+    // If it still overflows on a fresh page and has multiple items, split it
+    if (currentContentDiv.scrollHeight > MAX_CONTENT_HEIGHT && items.length > 1) {
+      freshSecEl.remove();
+      placeSectionItems(secId, title, items, isContinuation);
+    }
+  }
+
   const order = getValidSectionOrder();
+  order.forEach(secId => {
+    const def = sectionDefinitions[secId];
+    if (!def || !def.items || def.items.length === 0) return;
+    const title = getSectionTitle(resumeData, secId, def.defaultTitle);
+    placeSectionItems(secId, title, def.items, false);
+  });
 
-  // Distribute sections: first 3 on Page 1, remaining on Page 2
-  const p1Sections = order.slice(0, 3).map(id => sectionRenderers[id] ? sectionRenderers[id]() : '').join('');
-  const p2Sections = order.slice(3).map(id => sectionRenderers[id] ? sectionRenderers[id]() : '').join('');
+  // Ensure at least 2 pages for standard 2-page template presentation
+  if (currentPageIndex < 2) {
+    container.appendChild(createDividerDom());
+    currentPageIndex = 2;
+    const p2 = createPageDom(2);
+    container.appendChild(p2.pageDiv);
+  }
 
-  page1.innerHTML = headerHtml + p1Sections;
-  page2.innerHTML = p2Sections;
+  // Update all page footers: "Page X of Y"
+  const allFooters = container.querySelectorAll('.page-footer');
+  const totalPages = allFooters.length;
+  allFooters.forEach((footer, idx) => {
+    footer.textContent = `Page ${idx + 1} of ${totalPages}`;
+  });
 
   setupSectionInteractions();
   updatePageFitMeter();
@@ -306,6 +485,7 @@ function setupSectionInteractions() {
           currentOrder.splice(fromIdx, 1);
           currentOrder.splice(toIdx, 0, draggedSectionId);
           resumeData.sectionOrder = currentOrder;
+          resumeData._reorderedByUser = true;
           scheduleRender();
           if (currentActiveSectionId && typeof updateSectionHeadingEditor === 'function') {
             updateSectionHeadingEditor(currentActiveSectionId);
@@ -316,11 +496,9 @@ function setupSectionInteractions() {
     }
   });
 
-  // Cross-page container drop support
-  const p1Content = document.getElementById('page-1-content');
-  const p2Content = document.getElementById('page-2-content');
-  [p1Content, p2Content].forEach((container, cIdx) => {
-    if (!container) return;
+  // Cross-page container drop support across all dynamically created pages
+  const pageContainers = document.querySelectorAll('[id^="page-"][id$="-content"]');
+  pageContainers.forEach((container, cIdx) => {
     container.addEventListener('dragover', (e) => {
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
@@ -341,6 +519,7 @@ function setupSectionInteractions() {
         currentOrder.push(draggedSectionId);
       }
       resumeData.sectionOrder = currentOrder;
+      resumeData._reorderedByUser = true;
       scheduleRender();
       if (currentActiveSectionId && typeof updateSectionHeadingEditor === 'function') {
         updateSectionHeadingEditor(currentActiveSectionId);
@@ -372,33 +551,40 @@ function setupSectionInteractions() {
       scheduleRender();
     });
   });
+
+  // Highlight active section if currently open in drawer
+  if (currentActiveSectionId) {
+    document.querySelectorAll(`.resume-section[data-section-id="${currentActiveSectionId}"]`).forEach(el => {
+      el.classList.add('active-editing');
+    });
+  }
 }
 window.setupSectionInteractions = setupSectionInteractions;
 
-// Calculate Page Height & Fit
+// Calculate Page Height & Fit for all dynamic pages
 function updatePageFitMeter() {
   requestAnimationFrame(() => {
-    const page1 = document.querySelector('[data-purpose="resume-document-page-1"]');
-    const page2 = document.querySelector('[data-purpose="resume-document-page-2"]');
-    if (!page1 || !page2) return;
+    const pages = document.querySelectorAll('.resume-document-page');
+    if (!pages.length) return;
 
-    const content1 = document.getElementById('page-1-content');
-    const content2 = document.getElementById('page-2-content');
-
-    const h1 = content1.scrollHeight;
-    const max1 = page1.clientHeight - 60;
-    const pct1 = Math.round((h1 / max1) * 100);
-
-    const h2 = content2.scrollHeight;
-    const max2 = page2.clientHeight - 60;
-    const pct2 = Math.round((h2 / max2) * 100);
+    const pcts = [];
+    let allFit = true;
+    pages.forEach((page, idx) => {
+      const content = page.querySelector('[id$="-content"]');
+      if (!content) return;
+      const h = content.scrollHeight;
+      const maxH = page.clientHeight ? (page.clientHeight - 30) : 1014;
+      const pct = Math.round((h / maxH) * 100);
+      pcts.push(`P${idx + 1}: ${pct}%`);
+      if (pct > 102) allFit = false;
+    });
 
     const badge = document.getElementById('page-fit-badge');
     if (badge) {
-      if (pct1 <= 102 && pct2 <= 102) {
-        badge.textContent = `Page 1: ${pct1}% | Page 2: ${pct2}% (Perfect 2-Page Fit ✅)`;
+      if (allFit) {
+        badge.textContent = `${pcts.join(' | ')} (A4 Standard Fit ✅)`;
       } else {
-        badge.textContent = `P1: ${pct1}% | P2: ${pct2}% (Adjusting budget...)`;
+        badge.textContent = `${pcts.join(' | ')} (Adjusting budget...)`;
       }
     }
   });

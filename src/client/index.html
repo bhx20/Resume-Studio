@@ -20,10 +20,14 @@
       background: #ffffff !important;
       font-size: 8.9pt !important;
       line-height: 1.28 !important;
-      width: 8.5in !important;
-      min-height: 11in !important;
-      padding: 0.35in 0.45in !important;
+      width: 210mm !important;
+      min-height: 297mm !important;
+      height: 297mm !important;
+      max-height: 297mm !important;
+      padding: 10mm 12mm !important;
       box-sizing: border-box !important;
+      overflow: hidden !important;
+      position: relative !important;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -351,30 +355,39 @@
         transform: none !important;
         margin: 0 !important;
         padding: 0 !important;
-        width: 100% !important;
+        width: 210mm !important;
       }
       .resume-document-page {
         box-shadow: none !important;
         margin: 0 auto !important;
-        width: 100% !important;
-        min-height: auto !important;
-        height: auto !important;
-        max-height: none !important;
-        padding: 0.1in 0 !important;
+        width: 210mm !important;
+        min-height: 297mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        padding: 10mm 12mm !important;
+        box-sizing: border-box !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        overflow: hidden !important;
+        position: relative !important;
+      }
+      .resume-document-page:last-child {
         page-break-after: auto !important;
         break-after: auto !important;
       }
-      .company-block, .role-entry, .project-entry, .edu-entry {
+      .exp-entry, .proj-entry, .edu-entry, .skill-line, ul.bullets li, article {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
       }
-      h2, .role-header, .company-header {
+      h1, h2, h3, .section-title, .role-heading, .proj-heading {
         break-after: avoid !important;
         page-break-after: avoid !important;
       }
       @page {
-        size: letter portrait;
-        margin: 0.45in 0.55in;
+        size: A4 portrait;
+        margin: 0;
       }
     }
 
@@ -487,10 +500,10 @@
           </div>
 
           <!-- Page Break UI Marker -->
-          <div class="w-[8.5in] flex items-center justify-center gap-3 no-print">
+          <div class="w-[210mm] flex items-center justify-center gap-3 no-print page-break-marker">
             <div class="flex-1 h-px bg-slate-300"></div>
             <span class="text-[10px] font-semibold text-slate-500 bg-white border border-slate-300 px-3 py-0.5 rounded-full shadow-sm">
-              ✂️ Page Break Boundary (Calibrated 2-Page Budget)
+              ✂️ Page Break Boundary (A4 Standard)
             </span>
             <div class="flex-1 h-px bg-slate-300"></div>
           </div>

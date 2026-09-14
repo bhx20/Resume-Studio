@@ -451,7 +451,7 @@ function setupToolbarActions() {
       const reader = new FileReader();
       reader.onload = (event) => {
         try {
-          const parsed = JSON.parse(event.target.result);
+          const parsed = JSON.parse(String(event.target.result));
           applyImportedJson(parsed, file.name);
         } catch (parseErr) {
           alert(`Invalid JSON file: ${parseErr.message}`);
@@ -476,7 +476,7 @@ function setupToolbarActions() {
         const reader = new FileReader();
         reader.onload = (event) => {
           try {
-            const parsed = JSON.parse(event.target.result);
+            const parsed = JSON.parse(String(event.target.result));
             applyImportedJson(parsed, file.name);
           } catch (err) {
             alert(`Could not import dropped file: ${err.message}`);
@@ -661,19 +661,16 @@ function setupToolbarActions() {
   const fontSelect = document.getElementById('font-select');
   if (fontSelect) {
     fontSelect.onchange = () => {
-      const page1 = document.querySelector('[data-purpose="resume-document-page-1"]');
-      const page2 = document.querySelector('[data-purpose="resume-document-page-2"]');
-      if (fontSelect.value === 'sans') {
-        page1?.classList.remove('font-serif');
-        page1?.classList.add('font-sans');
-        page2?.classList.remove('font-serif');
-        page2?.classList.add('font-sans');
-      } else {
-        page1?.classList.remove('font-sans');
-        page1?.classList.add('font-serif');
-        page2?.classList.remove('font-sans');
-        page2?.classList.add('font-serif');
-      }
+      const pages = document.querySelectorAll('.resume-document-page');
+      pages.forEach(p => {
+        if (fontSelect.value === 'sans') {
+          p.classList.remove('font-serif');
+          p.classList.add('font-sans');
+        } else {
+          p.classList.remove('font-sans');
+          p.classList.add('font-serif');
+        }
+      });
       updatePageFitMeter();
     };
   }
