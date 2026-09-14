@@ -324,14 +324,56 @@
       background: #94a3b8;
     }
     @media print {
-      body {
+      @page {
+        size: A4 portrait;
+        margin: 0;
+      }
+
+      html, body {
         background: #ffffff !important;
-        overflow: visible !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 210mm !important;
         height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+        display: block !important;
       }
-      .no-print, .section-drag-handle, .section-edit-badge {
+
+      /* Strip and flatten all outer containers around #pages-container */
+      body > div,
+      div[data-purpose="print-simulation-wrapper"],
+      div[data-purpose="document-canvas-scroll"] {
+        display: block !important;
+        position: static !important;
+        overflow: visible !important;
+        background: transparent !important;
+        width: 210mm !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+
+      .no-print,
+      .section-drag-handle,
+      .section-edit-badge,
+      .page-break-marker,
+      #right-editor-panel,
+      #confirm-modal,
+      #toast {
         display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
+
       .resume-section {
         outline: none !important;
         background: transparent !important;
@@ -341,29 +383,30 @@
         outline: none !important;
         background: transparent !important;
       }
-      div[data-purpose="print-simulation-wrapper"] {
-        display: block !important;
-        overflow: visible !important;
-        background: #ffffff !important;
-        width: 100% !important;
-        height: auto !important;
-        padding: 0 !important;
-        margin: 0 !important;
-      }
+
       #pages-container {
         display: block !important;
+        position: static !important;
         transform: none !important;
         margin: 0 !important;
         padding: 0 !important;
         width: 210mm !important;
       }
+
+      /* Eliminate any space-y-* margins injected by Tailwind */
+      #pages-container > :not([hidden]) ~ :not([hidden]),
+      div[data-purpose="document-canvas-scroll"] > :not([hidden]) ~ :not([hidden]) {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+
       .resume-document-page {
         box-shadow: none !important;
-        margin: 0 auto !important;
+        margin: 0 !important;
         width: 210mm !important;
-        min-height: 297mm !important;
-        height: 297mm !important;
-        max-height: 297mm !important;
+        min-height: 296.8mm !important;
+        height: 296.8mm !important;
+        max-height: 296.8mm !important;
         padding: 10mm 12mm !important;
         box-sizing: border-box !important;
         page-break-after: always !important;
@@ -372,11 +415,17 @@
         break-inside: avoid !important;
         overflow: hidden !important;
         position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
       }
+
+      .resume-document-page:last-of-type,
       .resume-document-page:last-child {
-        page-break-after: auto !important;
-        break-after: auto !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
       }
+
       .exp-entry, .proj-entry, .edu-entry, .skill-line, ul.bullets li, article {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
@@ -384,10 +433,6 @@
       h1, h2, h3, .section-title, .role-heading, .proj-heading {
         break-after: avoid !important;
         page-break-after: avoid !important;
-      }
-      @page {
-        size: A4 portrait;
-        margin: 0;
       }
     }
 
