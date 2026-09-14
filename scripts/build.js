@@ -50,3 +50,4 @@ const redirectsContent = `# Netlify Redirects for SPA and API
 fs.writeFileSync(path.join(distDir, '_redirects'), redirectsContent, 'utf8');
 
 console.log('✅ Netlify build completed successfully! Output ready in dist/');
+
