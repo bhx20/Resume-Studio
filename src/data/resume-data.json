@@ -1,0 +1,189 @@
+{
+  "personal": {
+    "name": "Sanket Kalathiya",
+    "title": "Lead Flutter Developer & Mobile Architect | Multi-Platform (Mobile & Web)",
+    "location": "Surat, Gujarat, India 395004",
+    "phone": "+91 9727409439",
+    "email": "sanketkalathiya201@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/sanket-kalathiya-735579134/",
+    "github": "https://github.com/bhx20"
+  },
+  "summary": "Lead Flutter Developer & Mobile Architect with 6+ years of experience architecting, building, and shipping high-performance cross-platform mobile and web applications across fintech, smart city utilities, retail, social media, and enterprise developer tools. Specialized in Flutter SDK, Dart, BLoC, Riverpod, Clean Architecture, package-based modular architecture, server-driven UI, REST/GraphQL APIs, SQL/offline-first synchronization, Firebase, native Android/iOS integration, real-time communication, performance optimization, and production releases.",
+  "skills": [
+    {
+      "category": "Languages & Web",
+      "skills": "Dart 3 (Records, Patterns, Sealed Classes, Isolates), Flutter Web (Wasm, CanvasKit, JS-Interop), Flutter Engine (Skia & Impeller), Dart FFI, Code Generation (build_runner, AST), JavaScript/TypeScript, SQL"
+    },
+    {
+      "category": "Flutter & Architecture",
+      "skills": "Flutter (Android, iOS, Web, Desktop, Android TV), Clean Architecture, BLoC, MVVM, Package-Based Modular Architecture, Repository Pattern, Responsive & Adaptive UI, Custom Widgets & Animations"
+    },
+    {
+      "category": "State Management & DI",
+      "skills": "flutter_bloc, Riverpod, GetX, Provider, get_it, injectable, Service Locator"
+    },
+    {
+      "category": "Networking & Streaming",
+      "skills": "REST APIs (Dio, HTTP, Dartz), GraphQL (GraphQL Flutter), WebSockets, Socket.IO, ZegoCloud (Audio/Video Calling), Agora SDK, WebRTC, JWT Token Interceptors, GoRouter, AutoRoute"
+    },
+    {
+      "category": "Databases & Offline Storage",
+      "skills": "SQLite, sqflite, Drift, Hive, Cloud Firestore, Supabase, SharedPreferences, flutter_secure_storage, Offline-First Sync"
+    },
+    {
+      "category": "Firebase & Cloud Services",
+      "skills": "Firebase Auth, Cloud Firestore, Realtime Database, Firebase Storage, Push Notifications (FCM, OneSignal), Crashlytics, Firebase Analytics"
+    },
+    {
+      "category": "Native Integration & Hardware",
+      "skills": "Platform Channels (MethodChannel, EventChannel), Background Services (WorkManager, Foreground Services), Location (Geofencing, Geocoding), Bluetooth, NFC, Sensors, Biometrics (Fingerprint/Face ID), ZXing"
+    },
+    {
+      "category": "Payments, CI/CD & Tooling",
+      "skills": "Stripe, Razorpay, In-App Purchases (IAP), Git, GitHub Actions, GitLab CI, Fastlane, Google Play Console, Apple App Store Connect, Flutter DevTools, Postman"
+    }
+  ],
+  "experience": [
+    {
+      "company": "RedoQ",
+      "role": "Lead Flutter Engineer (SDE-II)",
+      "period": "Jul 2025 – Present",
+      "location": "Kolkata, West Bengal · Remote",
+      "bullets": [
+        "Architect core multi-platform application engine for the flagship Kuick Studio product using Flutter Web and Dart, increasing rendering performance and throughput by 30%.",
+        "Engineered scalable WebAssembly (Wasm) and CanvasKit rendering pipelines with modular BLoC state boundaries, reducing initial load latency by 25%.",
+        "Refactored legacy UI components into reusable, atomic Flutter design system primitives with memory-efficient lifecycle disposal, accelerating feature delivery velocity by 20%."
+      ]
+    },
+    {
+      "company": "Vyom Infotech",
+      "role": "Flutter Team Leader",
+      "period": "Feb 2025 – Jul 2025",
+      "location": "Surat, Gujarat · Hybrid",
+      "bullets": [
+        "Directed and mentored a development team of Flutter engineers, establishing strict code review standards, custom lint rules, and Clean Architecture patterns that decreased defect escape rates by 35%.",
+        "Managed task delegation, sprint execution, and direct stakeholder communication, ensuring 100% on-time milestone delivery across concurrent client applications."
+      ]
+    },
+    {
+      "company": "Regumsoft",
+      "role": "Lead Flutter Developer & Senior Software Engineer",
+      "period": "Jun 2020 – Feb 2025",
+      "location": "Surat, Gujarat · On-site",
+      "bullets": [
+        "Spearheaded end-to-end design, architecture, and dual-store deployment (App Store & Google Play) of 10+ production Flutter applications maintaining a 99.8% crash-free session rate.",
+        "Standardized team-wide engineering on Clean Architecture and reactive state patterns (BLoC, Riverpod), reducing code duplication by 35% and onboarding time for new developers.",
+        "Conducted deep-dive performance profiling via Flutter DevTools, eliminating unnecessary widget rebuilds with RepaintBoundary and const constructors to sustain stable 60 FPS.",
+        "Architected high-throughput client apps utilizing BLoC and GetX, implementing resilient REST/WebSocket endpoints and multi-provider payment processors (Stripe, Razorpay, In-App Purchases) processing $500K+ in volume.",
+        "Offloaded compute-heavy data transformations and image compression tasks to Dart isolates, cutting main thread UI jank by 40% with automated JWT token refresh interceptors maintaining 100% session continuity."
+      ]
+    },
+    {
+      "company": "PSK Technology",
+      "role": "Mobile Developer Trainee (Flutter & Dart)",
+      "period": "Feb 2020 – Jul 2020",
+      "location": "Surat, Gujarat · On-site",
+      "bullets": [
+        "Completed intensive software development immersion in Dart, Flutter SDK, state management (setState, Provider), and Git workflows, building 4 production-grade prototype applications with 100% test pass rates."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "kuick-studio",
+      "title": "Kuick Studio — Visual Website Builder & Zero-Code Tool (RedoQ)",
+      "role": "Core System Architect & Flutter Export Lead",
+      "market": "Enterprise & Creator Web Platforms",
+      "platform": "Flutter Web, WebAssembly (Wasm), CanvasKit",
+      "tech": "Flutter Web, Dart, Wasm, CanvasKit, BLoC, Code Generation Engine, AST Parsing",
+      "featured": true,
+      "bullets": [
+        "Architected the core multi-platform application engine for RedoQ's flagship visual zero-code website builder using Flutter Web and Dart, supporting 10,000+ creator canvas sessions.",
+        "Engineered high-performance Wasm/CanvasKit rendering pipelines reducing initial load latency by 25%, and built the automated clean-code Flutter export engine with modular architecture.",
+        "Developed an AST-driven reactive DOM state synchronization pipeline and visual drag-and-drop canvas with custom RenderObjects, sustaining 60 FPS rendering under complex layout trees."
+      ]
+    },
+    {
+      "id": "looisa",
+      "title": "Looisa — Astrologer Consultation & Media Platform",
+      "role": "Project Lead & Full-Stack Architect",
+      "market": "Global Astrological Community",
+      "platform": "Flutter (Android, iOS) | React (Web) | Node.js",
+      "tech": "Flutter, React, Node.js, WebSockets, ZegoCloud (Audio/Video Calling), In-App Wallet",
+      "featured": true,
+      "bullets": [
+        "Directed end-to-end multi-platform development across mobile (Flutter), consultant web portal (React), and backend services (Node.js) as sole technical lead, delivering 100% of launch deliverables on schedule.",
+        "Engineered real-time consultation engine featuring ZegoCloud low-latency (<200ms) audio/video calling, live chat via WebSockets, in-app wallet billing, and an interactive digital eBook editor.",
+        "Architected resilient WebSockets state synchronization with automated reconnection routines, achieving 99.9% uptime, <150ms message delivery, and zero wallet ledger transaction discrepancies."
+      ]
+    },
+    {
+      "id": "pocket-giving",
+      "title": "Pocket Giving — Charity Collection Platform (UAE)",
+      "role": "Project Manager & Mobile Lead",
+      "market": "UAE & Middle East Market",
+      "platform": "Flutter (Android, iOS)",
+      "tech": "Flutter, Payment Gateways, Push Notifications, Secure Donor Transactions, REST APIs",
+      "featured": true,
+      "bullets": [
+        "Spearheaded end-to-end product delivery for a premier UAE charity collection app, managing sprint roadmaps, regional fintech compliance, and achieving 100% on-time store release milestones.",
+        "Engineered secure donation workflows with multi-currency payment gateway integrations processing $250K+ in contributions, instant receipting, and localized Arabic/English RTL support.",
+        "Implemented local SQLite offline donation queuing and cryptographic signature validation, achieving 100% sync reliability and zero transaction loss during intermittent network connectivity."
+      ]
+    },
+    {
+      "id": "cape-town",
+      "title": "City of Cape Town — Smart City & Municipal Portal",
+      "role": "Technical Lead & Mobile Architect",
+      "market": "South Africa Market",
+      "platform": "Flutter (Android, iOS)",
+      "tech": "Flutter, Riverpod, Geofencing, Background Services, REST APIs",
+      "featured": true,
+      "bullets": [
+        "Technical Lead & Mobile Architect for citizen service portal utilized by 100,000+ residents, featuring civic news delivery, municipal fault logging, and live load-shedding power schedule tracking.",
+        "Built background geofencing service triggering area-specific push notifications when grid stages shift, decreasing municipal helpdesk inbound inquiries by 45%, paired with offline fault caching.",
+        "Architected offline-first municipal fault ticketing with local media compression and background WorkManager synchronization, achieving a 99.8% crash-free session rate."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "category": "Academic Degree",
+      "degree": "Bachelor of Commerce (B.Com)",
+      "fieldOfStudy": "Financial Accounting & Business Economics",
+      "institution": "H.A. College of Commerce, Gujarat University",
+      "location": "Ahmedabad, Gujarat",
+      "startDate": "Jun 2016",
+      "endDate": "Mar 2019",
+      "period": "Jun 2016 – Mar 2019",
+      "grade": "First Class",
+      "bullets": []
+    },
+    {
+      "category": "Professional Certification",
+      "degree": "Technical Training – Flutter & Dart",
+      "fieldOfStudy": "Cross-Platform Mobile App Development",
+      "institution": "PSK Technologies",
+      "location": "Surat, Gujarat",
+      "startDate": "Feb 2020",
+      "endDate": "Jul 2020",
+      "period": "Feb 2020 – Jul 2020",
+      "grade": "First Class with Distinction",
+      "bullets": [
+        "Completed comprehensive technical immersion in Flutter SDK, Dart, Clean Architecture, reactive state management (BLoC, Provider, Riverpod), and REST APIs."
+      ]
+    },
+    {
+      "category": "Engineering Immersion",
+      "degree": "Advanced Cross-Platform Mobile Engineering Certification",
+      "fieldOfStudy": "Flutter & Dart Mobile Architecture",
+      "institution": "PSK Technologies",
+      "location": "Surat, Gujarat",
+      "startDate": "Jan 2021",
+      "endDate": "Dec 2021",
+      "period": "2021",
+      "grade": "Excellence Honors",
+      "bullets": []
+    }
+  ]
+}

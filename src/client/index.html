@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Resume Studio - ATS Calibrated Editor</title>
+  <!-- Tailwind CSS v3 with plugins -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- FontAwesome for icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Inter font: ATS Gold Standard for Software Engineering -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style data-purpose="custom-scrollbar">
+    /* Software Engineer Resume Industry Standard Typography & ATS PDF Matching */
+    .resume-document-page {
+      font-family: Arial, Helvetica, sans-serif !important;
+      color: #000000 !important;
+      background: #ffffff !important;
+      font-size: 8.9pt !important;
+      line-height: 1.28 !important;
+      width: 8.5in !important;
+      min-height: 11in !important;
+      padding: 0.35in 0.45in !important;
+      box-sizing: border-box !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    .resume-document-page header {
+      margin-bottom: 5px;
+    }
+    .resume-document-page h1 {
+      font-size: 19pt !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.2px !important;
+      word-spacing: normal !important;
+      line-height: 1.1 !important;
+      margin-bottom: 1.5px !important;
+    }
+    .resume-document-page .subtitle {
+      font-size: 11pt !important;
+      font-weight: 700 !important;
+      letter-spacing: normal !important;
+      word-spacing: normal !important;
+      margin-bottom: 2px !important;
+    }
+    .resume-document-page .contact-line {
+      font-size: 8.6pt !important;
+      line-height: 1.32 !important;
+      letter-spacing: normal !important;
+      word-spacing: normal !important;
+    }
+    .resume-document-page .contact-line a {
+      color: #000000 !important;
+      text-decoration: none !important;
+    }
+    .resume-document-page h2.section-title {
+      font-size: 10.2pt !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.2px !important;
+      word-spacing: normal !important;
+      margin-top: 5px !important;
+      margin-bottom: 3px !important;
+      border-bottom: 1px solid #111111 !important;
+      padding-bottom: 1px !important;
+    }
+    .resume-document-page p.summary {
+      font-size: 8.7pt !important;
+      line-height: 1.28 !important;
+      text-align: left !important;
+      letter-spacing: normal !important;
+      word-spacing: normal !important;
+      margin-bottom: 3px !important;
+    }
+    .resume-document-page .skill-line {
+      font-size: 8.5pt !important;
+      line-height: 1.25 !important;
+      margin-bottom: 1.5px !important;
+      text-align: left !important;
+      letter-spacing: normal !important;
+      word-spacing: normal !important;
+    }
+    .resume-document-page .bold {
+      font-weight: 700 !important;
+    }
+    .resume-document-page .role-heading, .resume-document-page .proj-heading {
+      font-size: 8.9pt !important;
+      font-weight: 700 !important;
+      line-height: 1.22 !important;
+      letter-spacing: normal !important;
+      word-spacing: normal !important;
+      margin-top: 3.5px !important;
+      margin-bottom: 0.5px !important;
+    }
+    .resume-document-page .proj-stack {
+      font-weight: 400 !important;
+      font-size: 8.4pt !important;
+      color: #222222 !important;
+      letter-spacing: normal !important;
+      word-spacing: normal !important;
+    }
+    .resume-document-page .meta {
+      font-size: 8.5pt !important;
+      color: #222222 !important;
+      letter-spacing: normal !important;
+      word-spacing: normal !important;
+      margin-bottom: 1.5px !important;
+    }
+    .resume-document-page ul.bullets {
+      list-style-type: disc !important;
+      padding-left: 14px !important;
+      margin-bottom: 1px !important;
+    }
+    .resume-document-page ul.bullets li {
+      font-size: 8.5pt !important;
+      line-height: 1.25 !important;
+      margin-bottom: 1px !important;
+      text-align: left !important;
+      letter-spacing: normal !important;
+      word-spacing: normal !important;
+    }
+    .resume-document-page .edu-entry {
+      margin-bottom: 4px !important;
+    }
+    .resume-document-page .edu-heading-row {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: baseline !important;
+      gap: 8px !important;
+    }
+    .resume-document-page .edu-heading-row .role-heading {
+      margin: 0 !important;
+      font-size: 8.9pt !important;
+      font-weight: bold !important;
+      color: #000000 !important;
+    }
+    .resume-document-page .edu-sub-row {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: baseline !important;
+      font-size: 8.3pt !important;
+      color: #333333 !important;
+      margin-top: 0.5px !important;
+      gap: 8px !important;
+    }
+    .resume-document-page .edu-sub-row .grade {
+      color: #475569 !important;
+      font-style: italic !important;
+    }
+    .resume-document-page .edu-line {
+      font-size: 8.5pt !important;
+      line-height: 1.3 !important;
+      margin-bottom: 2px !important;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    /* Interactive Section Hover, Drag & Active States */
+    .resume-section {
+      position: relative;
+      transition: background-color 0.15s ease, outline 0.15s ease, transform 0.15s ease;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 1px 2px;
+      margin: 1px -2px;
+    }
+    .resume-section:hover {
+      outline: 2px dashed #3b82f6 !important;
+      background-color: rgba(59, 130, 246, 0.03) !important;
+    }
+    .resume-section .section-drag-handle {
+      position: absolute;
+      top: -3px;
+      left: -38px;
+      opacity: 0;
+      transition: opacity 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
+      cursor: grab;
+      color: #475569;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 10px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      z-index: 30;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .resume-section:hover .section-drag-handle {
+      opacity: 1;
+    }
+    .resume-section .section-drag-handle:hover {
+      background: #eff6ff;
+      border-color: #3b82f6;
+      color: #1d4ed8;
+      transform: scale(1.05);
+    }
+    .resume-section .section-drag-handle:active {
+      cursor: grabbing;
+    }
+    .resume-section .section-drag-handle .drag-text {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .resume-section.dragging {
+      opacity: 0.4 !important;
+      outline: 2px dashed #64748b !important;
+    }
+    .resume-section.drag-over {
+      outline: 2px solid #2563eb !important;
+      background-color: rgba(37, 99, 235, 0.08) !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    }
+    .resume-section .section-edit-badge {
+      position: absolute;
+      top: -10px;
+      right: 0px;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      color: #2563eb;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 9999px;
+      padding: 1px 7px;
+      font-size: 9px;
+      font-weight: 700;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      z-index: 20;
+      pointer-events: none;
+      text-transform: uppercase;
+    }
+    .resume-section:hover .section-edit-badge {
+      opacity: 1;
+    }
+    .resume-section.dragging {
+      opacity: 0.35;
+      transform: scale(0.98);
+    }
+    .resume-section.drag-over {
+      outline: 2px solid #2563eb !important;
+      background-color: rgba(37, 99, 235, 0.08) !important;
+    }
+    .resume-section.active-editing {
+      outline: 2px solid #2563eb !important;
+      background-color: rgba(37, 99, 235, 0.04) !important;
+    }
+
+    /* Floating Overlay Contextual Drawer with Safe Margins & Right-to-Left Slide Animation */
+    #right-editor-panel {
+      position: absolute;
+      top: 1rem;
+      bottom: 1rem;
+      right: 1rem;
+      width: 500px;
+      max-width: calc(100vw - 2rem);
+      height: calc(100% - 2rem);
+      max-height: calc(100% - 2rem);
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 1rem;
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(15, 23, 42, 0.05);
+      z-index: 40;
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+      overflow: hidden;
+    }
+    #right-editor-panel.collapsed-panel {
+      transform: translateX(calc(100% + 2.5rem)) !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    /* Single Scrollbar System: Disables internal field scrollbars and allows auto-expansion */
+    textarea,
+    #right-editor-panel textarea {
+      overflow: hidden !important;
+      overflow-y: hidden !important;
+      resize: none !important;
+      field-sizing: content;
+      min-height: 2.25rem;
+      line-height: 1.45;
+    }
+
+    /* Sleek single scrollbar for drawer form container */
+    #right-editor-panel [data-purpose="form-inputs-container"]::-webkit-scrollbar {
+      width: 6px;
+    }
+    #right-editor-panel [data-purpose="form-inputs-container"]::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    #right-editor-panel [data-purpose="form-inputs-container"]::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    #right-editor-panel [data-purpose="form-inputs-container"]::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    @media print {
+      body {
+        background: #ffffff !important;
+        overflow: visible !important;
+        height: auto !important;
+      }
+      .no-print, .section-drag-handle, .section-edit-badge {
+        display: none !important;
+      }
+      .resume-section {
+        outline: none !important;
+        background: transparent !important;
+        cursor: default !important;
+      }
+      .resume-section:hover {
+        outline: none !important;
+        background: transparent !important;
+      }
+      div[data-purpose="print-simulation-wrapper"] {
+        display: block !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        width: 100% !important;
+        height: auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      #pages-container {
+        display: block !important;
+        transform: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+      }
+      .resume-document-page {
+        box-shadow: none !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        min-height: auto !important;
+        height: auto !important;
+        max-height: none !important;
+        padding: 0.1in 0 !important;
+        page-break-after: auto !important;
+        break-after: auto !important;
+      }
+      .company-block, .role-entry, .project-entry, .edu-entry {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      h2, .role-header, .company-header {
+        break-after: avoid !important;
+        page-break-after: avoid !important;
+      }
+      @page {
+        size: letter portrait;
+        margin: 0.45in 0.55in;
+      }
+    }
+
+    /* Central Base UI for Section Header Action Buttons */
+    .btn-section-add {
+      background-color: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid rgba(191, 219, 254, 0.7);
+      border-radius: 0.5rem;
+      padding: 0.375rem 0.75rem;
+      font-size: 0.75rem;
+      line-height: 1rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      transition: all 0.15s ease-in-out;
+      cursor: pointer;
+    }
+    .btn-section-add:hover {
+      background-color: #dbeafe;
+      color: #1e40af;
+      border-color: #93c5fd;
+    }
+    .btn-section-add:active {
+      transform: scale(0.96);
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased h-screen flex flex-col overflow-hidden">
+
+  <!-- BEGIN: MainHeader -->
+  <header class="bg-white border-b border-slate-200 h-14 flex items-center justify-between px-4 shrink-0 z-20 no-print" data-purpose="app-header">
+    <!-- App Branding & Status -->
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2">
+        <div class="bg-slate-900 text-white p-1.5 rounded-lg flex items-center justify-center font-bold text-sm">
+          <i class="fa-solid fa-file-lines"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-slate-900 text-sm leading-tight">Resume Studio</h1>
+          <p class="text-[10px] text-slate-500 font-medium">2026 Production Standard • 2-Page ATS Calibrated</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions & Controls: Import/Export JSON, Download PDF, and Download DOC -->
+    <div class="flex items-center space-x-2 text-xs">
+      <!-- Hidden File Input for JSON import -->
+      <input type="file" id="inp-import-json" accept=".json,application/json" class="hidden" />
+
+      <!-- Import JSON -->
+      <button id="btn-import-json" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition hover:border-emerald-500 hover:text-emerald-700" title="Import Resume JSON File (Dynamic Load & Sync)">
+        <i class="fa-solid fa-file-import text-emerald-600"></i>
+        <span>Import JSON</span>
+      </button>
+
+      <!-- Export JSON -->
+      <button id="btn-export-json" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition hover:border-amber-500 hover:text-amber-700" title="Export Resume Data as JSON file">
+        <i class="fa-solid fa-file-export text-amber-600"></i>
+        <span>Export JSON</span>
+      </button>
+
+      <!-- Download PDF -->
+      <button id="btn-download-pdf" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition hover:border-rose-400 hover:text-rose-700" title="Download Print-Ready PDF">
+        <i class="fa-solid fa-file-pdf text-rose-600"></i>
+        <span>Download PDF</span>
+      </button>
+
+      <!-- Download DOC -->
+      <button id="btn-download-doc" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition" title="Download Microsoft Word Document (.docx)">
+        <i class="fa-solid fa-file-word text-blue-400"></i>
+        <span>Download DOC</span>
+      </button>
+    </div>
+  </header>
+  <!-- END: MainHeader -->
+
+  <!-- BEGIN: MainWorkspace -->
+  <div class="flex-1 flex overflow-hidden relative">
+
+    <!-- BEGIN: Center Canvas (Resume stays in center of screen) -->
+    <div class="flex-1 bg-slate-200/70 flex flex-col overflow-hidden relative" data-purpose="print-simulation-wrapper">
+      
+      <!-- Floating Zoom Controls (Bottom Left Corner) -->
+      <div class="absolute bottom-5 left-5 z-20 bg-white/95 backdrop-blur border border-slate-300 rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-md no-print text-xs select-none">
+        <button id="btn-zoom-out" class="w-6 h-6 flex items-center justify-center hover:bg-slate-100 active:scale-95 rounded-full text-slate-600 font-bold transition" title="Zoom Out PDF (Ctrl + Scroll Down)">−</button>
+        <button id="btn-zoom-reset" class="text-[11px] font-semibold text-slate-600 hover:text-blue-600 px-1.5 py-0.5 rounded hover:bg-slate-100 transition" title="Click to reset PDF zoom to 100% (Ctrl + 0)">
+          <span id="zoom-text">100%</span>
+        </button>
+        <button id="btn-zoom-in" class="w-6 h-6 flex items-center justify-center hover:bg-slate-100 active:scale-95 rounded-full text-slate-600 font-bold transition" title="Zoom In PDF (Ctrl + Scroll Up)">+</button>
+      </div>
+
+      <!-- Simulated Document View (Both Pages Stacked & Centered) -->
+      <div class="flex-1 overflow-auto p-8 flex flex-col items-center space-y-8" data-purpose="document-canvas-scroll">
+        
+        <div id="pages-container" class="flex flex-col items-center space-y-8 transition-transform duration-150 origin-top">
+          <!-- PAGE 1 DOM ELEMENT -->
+          <div class="resume-document-page shadow-2xl flex flex-col justify-between" data-purpose="resume-document-page-1">
+            <div id="page-1-content">
+              <!-- Dynamically populated: Header, Summary, Skills, Work Experience -->
+            </div>
+            <!-- Document Footer Pagination Note -->
+            <div class="border-t border-slate-200 pt-2 text-center text-[10px] text-slate-400 font-sans no-print" style="margin-top:auto;">
+              Page 1 of 2
+            </div>
+          </div>
+
+          <!-- Page Break UI Marker -->
+          <div class="w-[8.5in] flex items-center justify-center gap-3 no-print">
+            <div class="flex-1 h-px bg-slate-300"></div>
+            <span class="text-[10px] font-semibold text-slate-500 bg-white border border-slate-300 px-3 py-0.5 rounded-full shadow-sm">
+              ✂️ Page Break Boundary (Calibrated 2-Page Budget)
+            </span>
+            <div class="flex-1 h-px bg-slate-300"></div>
+          </div>
+
+          <!-- PAGE 2 DOM ELEMENT -->
+          <div class="resume-document-page shadow-2xl flex flex-col justify-between" data-purpose="resume-document-page-2">
+            <div id="page-2-content">
+              <!-- Dynamically populated: Featured Projects, Education -->
+            </div>
+            <!-- Document Footer Pagination Note -->
+            <div class="border-t border-slate-200 pt-2 text-center text-[10px] text-slate-400 font-sans no-print" style="margin-top:auto;">
+              Page 2 of 2
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- END: Center Canvas -->
+
+    <!-- BEGIN: Right-Side Contextual Editor Drawer -->
+    <div id="right-editor-panel" class="flex flex-col no-print collapsed-panel">
+      
+      <!-- Right Panel Title Bar -->
+      <div class="px-4 py-2.5 border-b border-slate-200/90 flex items-center justify-between bg-slate-50/90 gap-2.5 shrink-0">
+        <div class="flex items-center gap-2 flex-1 min-w-0">
+          <input id="inp-active-section-heading" type="text" class="text-xs font-bold text-slate-800 uppercase tracking-wide bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition flex-1 min-w-0 shadow-sm" placeholder="SECTION HEADING">
+        </div>
+        <button id="btn-close-editor" class="text-slate-400 hover:text-slate-700 w-7 h-7 rounded-lg hover:bg-slate-200/80 flex items-center justify-center text-xs transition shrink-0" title="Close Editor Panel">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Form Content Area (Opens for selected section only) -->
+      <div id="editor-form-container" class="flex-1 overflow-y-auto p-5 pb-8 space-y-5 min-h-0" data-purpose="form-inputs-container">
+
+        <!-- TAB 1: PERSONAL INFORMATION -->
+        <div id="tab-personal" class="tab-pane hidden space-y-5">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Personal Information</h2>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Full Name</label>
+            <input id="inp-name" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition" type="text" value="Sanket Kalathiya">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Target Professional Title</label>
+            <input id="inp-title" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition" type="text" value="Lead Mobile Application Engineer | Senior Flutter Developer">
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Location</label>
+              <input id="inp-location" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition" type="text" value="Surat, Gujarat, India (395004)">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Phone Number</label>
+              <input id="inp-phone" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition" type="text" value="+91 9727409439">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Email Address</label>
+            <input id="inp-email" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition" type="email" value="sanketkalathiya201@gmail.com">
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">LinkedIn URL</label>
+              <input id="inp-linkedin" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition" type="text" value="https://linkedin.com/in/sanket-kalathiya">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">GitHub URL</label>
+              <input id="inp-github" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition" type="text" value="https://github.com/sanketkalathiya">
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: SUMMARY -->
+        <div id="tab-summary" class="tab-pane hidden space-y-5">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Professional Summary</h2>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Executive Summary Text</label>
+            <textarea id="inp-summary" rows="1" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition"></textarea>
+          </div>
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs text-slate-600">
+            <strong class="text-slate-800 font-semibold block mb-1">💡 Software Engineer Benchmark:</strong>
+            Highlight measurable engineering scope (e.g. 99.8% crash-free rate, 15+ production apps) and architectural leadership (Clean Architecture, BLoC/Riverpod, CI/CD).
+          </div>
+        </div>
+
+        <!-- TAB 3: SKILLS -->
+        <div id="tab-skills" class="tab-pane hidden space-y-5">
+          <div class="flex justify-between items-center gap-3">
+            <div class="min-w-0 flex-1">
+              <h2 class="text-base font-bold text-slate-900">Technical Skills</h2>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button id="btn-toggle-skills-view" type="button" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg text-xs transition border border-slate-300/70 shadow-sm flex items-center gap-1.5" title="Toggle compact reorder view">
+                <i class="fa-solid fa-list-ol text-[11px] text-blue-600"></i>
+                <span id="txt-skills-view-mode">Reorder View</span>
+              </button>
+              <button id="btn-add-skill-category" class="btn-section-add">
+                <i class="fa-solid fa-plus text-[10px]"></i>
+                <span>Add Category</span>
+              </button>
+            </div>
+          </div>
+          <div id="skills-list" class="space-y-4"></div>
+        </div>
+
+        <!-- TAB 4: EXPERIENCE -->
+        <div id="tab-experience" class="tab-pane hidden space-y-5">
+          <div class="flex justify-between items-center gap-3">
+            <div class="min-w-0 flex-1">
+              <h2 class="text-base font-bold text-slate-900">Professional Experience</h2>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button id="btn-toggle-experience-view" type="button" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg text-xs transition border border-slate-300/70 shadow-sm flex items-center gap-1.5" title="Toggle compact reorder view">
+                <i class="fa-solid fa-list-ol text-[11px] text-blue-600"></i>
+                <span id="txt-experience-view-mode">Reorder View</span>
+              </button>
+              <button id="btn-add-experience" class="btn-section-add">
+                <i class="fa-solid fa-plus text-[10px]"></i>
+                <span>Add Position</span>
+              </button>
+            </div>
+          </div>
+          <div id="experience-list" class="space-y-4"></div>
+        </div>
+
+        <!-- TAB 5: PROJECTS -->
+        <div id="tab-projects" class="tab-pane hidden space-y-5">
+          <div class="flex justify-between items-center gap-3">
+            <div class="min-w-0 flex-1">
+              <h2 class="text-base font-bold text-slate-900">Selected Projects</h2>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button id="btn-toggle-projects-view" type="button" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg text-xs transition border border-slate-300/70 shadow-sm flex items-center gap-1.5" title="Toggle compact reorder view">
+                <i class="fa-solid fa-list-ol text-[11px] text-blue-600"></i>
+                <span id="txt-projects-view-mode">Reorder View</span>
+              </button>
+              <button id="btn-add-project" class="btn-section-add">
+                <i class="fa-solid fa-plus text-[10px]"></i>
+                <span>Add Project</span>
+              </button>
+            </div>
+          </div>
+          <div id="projects-list" class="space-y-4"></div>
+        </div>
+
+        <!-- TAB 6: EDUCATION -->
+        <div id="tab-education" class="tab-pane hidden space-y-5">
+          <div class="flex justify-between items-center gap-3">
+            <div class="min-w-0 flex-1">
+              <h2 class="text-base font-bold text-slate-900">Education &amp; Credentials</h2>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button id="btn-toggle-education-view" type="button" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg text-xs transition border border-slate-300/70 shadow-sm flex items-center gap-1.5" title="Toggle compact reorder view">
+                <i class="fa-solid fa-list-ol text-[11px] text-blue-600"></i>
+                <span id="txt-education-view-mode">Reorder View</span>
+              </button>
+              <button id="btn-add-education" class="btn-section-add">
+                <i class="fa-solid fa-plus text-[10px]"></i>
+                <span>Add Credential</span>
+              </button>
+            </div>
+          </div>
+          <div id="education-list" class="space-y-4"></div>
+        </div>
+
+        <!-- TAB 7: CUSTOM DYNAMIC SECTIONS -->
+        <div id="tab-custom" class="tab-pane hidden space-y-5">
+          <div class="flex justify-between items-center gap-3">
+            <div class="min-w-0 flex-1">
+              <h2 class="text-base font-bold text-slate-900">Custom Dynamic Sections</h2>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button id="btn-toggle-custom-view" type="button" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg text-xs transition border border-slate-300/70 shadow-sm flex items-center gap-1.5" title="Toggle compact reorder view">
+                <i class="fa-solid fa-list-ol text-[11px] text-blue-600"></i>
+                <span id="txt-custom-view-mode">Reorder View</span>
+              </button>
+              <button id="btn-add-custom-section" class="btn-section-add">
+                <i class="fa-solid fa-plus text-[10px]"></i>
+                <span>Add Section</span>
+              </button>
+            </div>
+          </div>
+          <div id="custom-sections-list" class="space-y-4"></div>
+        </div>
+
+      </div>
+
+      <!-- Editor Bottom Bar: Auto-save status and Reset Data button -->
+      <div class="border-t border-slate-200/90 px-5 py-3 bg-slate-50/90 flex items-center justify-between text-xs shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span id="save-status" class="font-medium text-slate-600">Saved to local database</span>
+        </div>
+        <button id="btn-reset" class="text-slate-500 hover:text-rose-600 font-semibold flex items-center gap-1.5 transition text-xs py-1.5 px-3 rounded-lg hover:bg-rose-50 border border-transparent hover:border-rose-200" title="Reset this section back to default template data">
+          <i class="fa-solid fa-rotate-left text-slate-400"></i>
+          <span id="btn-reset-text">Reset Section</span>
+        </button>
+      </div>
+    </div>
+    <!-- END: Right-Side Contextual Editor Drawer -->
+
+  </div>
+  <!-- END: MainWorkspace -->
+
+  <!-- Custom Confirmation Dialog Modal ("Our Dialog") -->
+  <div id="confirm-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
+    <div id="confirm-modal-box" class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4 transform transition-all duration-150 scale-95 opacity-0">
+      <div class="flex items-start gap-3.5">
+        <div id="confirm-modal-icon-container" class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-200/80 shrink-0">
+          <i id="confirm-modal-icon" class="fa-solid fa-rotate-left text-base"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h3 id="confirm-modal-title" class="text-base font-bold text-slate-900 leading-snug">Reset Section?</h3>
+          <div id="confirm-modal-message" class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+            Are you sure you want to reset this section back to default template data?
+          </div>
+        </div>
+      </div>
+      <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-100">
+        <button id="confirm-modal-cancel" type="button" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+          Cancel
+        </button>
+        <button id="confirm-modal-ok" type="button" class="px-4 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-sm transition flex items-center gap-1.5">
+          <i class="fa-solid fa-rotate-left text-[11px]"></i>
+          <span id="confirm-modal-ok-text">Reset Section</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl text-xs font-medium hidden z-50 flex items-center gap-2 border border-slate-700">
+    <i class="fa-solid fa-circle-check text-emerald-400"></i>
+    <span id="toast-text">Saved to disk!</span>
+  </div>
+
+  <!-- Core Application Scripts (Decoupled Modular Architecture) -->
+  <script src="js/state.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/editors/editor-core.js"></script>
+  <script src="js/editors/skills-editor.js"></script>
+  <script src="js/editors/exp-editor.js"></script>
+  <script src="js/editors/proj-editor.js"></script>
+  <script src="js/editors/edu-editor.js"></script>
+  <script src="js/editors/custom-editor.js"></script>
+  <script src="js/toolbar.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

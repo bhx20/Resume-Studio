@@ -1,0 +1,325 @@
+const { normalizeResumeData, renderCustomSectionHtml, getSectionTitle, escapeHtml, formatEducationLine, formatEducationHtml } = require('../utils/helpers');
+
+function generateHtml(raw) {
+  const data = normalizeResumeData(raw);
+  const p = data.personal || {};
+
+  const skillsHtml = (data.skills || []).map(s => `
+    <div class="skill-line">
+      <strong class="bold">${s.category}:</strong> ${s.skills}
+    </div>
+  `).join('');
+
+  const expHtml = (data.experience || []).map(e => `
+    <article class="exp-entry">
+      <h3 class="role-heading bold">${e.company || ''} | ${e.role || ''}</h3>
+      <div class="meta">${e.period || ''}${e.location ? ' | ' + e.location : ''}</div>
+      <ul class="bullets">
+        ${(e.bullets || []).map(b => `<li>${b}</li>`).join('')}
+      </ul>
+    </article>
+  `).join('');
+
+  const projHtml = (data.projects || []).map(proj => `
+    <article class="proj-entry">
+      <h3 class="proj-heading bold">${proj.title || ''}${proj.tech ? ' | <span class="proj-stack">' + proj.tech + '</span>' : ''}</h3>
+      <ul class="bullets">
+        ${(proj.bullets || []).map(b => `<li>${b}</li>`).join('')}
+      </ul>
+    </article>
+  `).join('');
+
+  const achievements = data.achievements || [];
+  const achHtml = achievements.length > 0 ? `
+    <section>
+      <h2 class="section-title">${escapeHtml(getSectionTitle(data, 'achievements', 'CORE ENGINEERING & ACHIEVEMENTS').toUpperCase())}</h2>
+      <ul class="bullets" style="margin-bottom: 8px;">
+        ${achievements.map(a => `<li>${a}</li>`).join('')}
+      </ul>
+    </section>
+  ` : '';
+
+  const eduHtml = (data.education || []).map(edu => formatEducationHtml(edu, escapeHtml)).join('');
+
+  const sectionRenderers = {
+    summary: () => `
+      <section>
+        <h2 class="section-title">${escapeHtml(getSectionTitle(data, 'summary', 'PROFESSIONAL SUMMARY').toUpperCase())}</h2>
+        <p class="summary">${data.summary || ''}</p>
+      </section>
+    `,
+    skills: () => `
+      <section>
+        <h2 class="section-title">${escapeHtml(getSectionTitle(data, 'skills', 'TECHNICAL SKILLS MATRIX').toUpperCase())}</h2>
+        ${skillsHtml}
+      </section>
+    `,
+    experience: () => `
+      <section>
+        <h2 class="section-title">${escapeHtml(getSectionTitle(data, 'experience', 'PROFESSIONAL EXPERIENCE').toUpperCase())}</h2>
+        ${expHtml}
+      </section>
+    `,
+    projects: () => `
+      <section>
+        <h2 class="section-title" style="margin-top:0;">${escapeHtml(getSectionTitle(data, 'projects', 'KEY PROJECTS & DELIVERABLES').toUpperCase())}</h2>
+        ${projHtml}
+      </section>
+    `,
+    achievements: () => achHtml,
+    education: () => `
+      <section>
+        <h2 class="section-title">${escapeHtml(getSectionTitle(data, 'education', 'EDUCATION').toUpperCase())}</h2>
+        ${eduHtml}
+      </section>
+    `
+  };
+
+  (data.customSections || []).forEach(cs => {
+    if (cs && cs.key && !['sectionOrder', 'sectionTitles', 'titles', 'headers', 'template', 'theme', 'id', 'version', 'meta', 'metadata'].includes(cs.key)) {
+      sectionRenderers[cs.key] = () => renderCustomSectionHtml(cs, escapeHtml, getSectionTitle(data, cs.key, cs.title));
+    }
+  });
+
+  const defaultOrder = ['summary', 'skills', 'experience', 'projects', 'achievements', 'education'];
+  (data.customSections || []).forEach(cs => {
+    if (cs && cs.key && !defaultOrder.includes(cs.key) && !['sectionOrder', 'sectionTitles', 'titles', 'headers', 'template', 'theme', 'id', 'version', 'meta', 'metadata'].includes(cs.key)) {
+      defaultOrder.push(cs.key);
+    }
+  });
+
+  const order = (Array.isArray(data.sectionOrder) && data.sectionOrder.length > 0)
+    ? data.sectionOrder.filter(id => !['sectionOrder', 'sectionTitles', 'titles', 'headers', 'template', 'theme', 'id', 'version', 'meta', 'metadata'].includes(id))
+    : defaultOrder;
+
+  const page1Sections = order.slice(0, 3).map(id => sectionRenderers[id] ? sectionRenderers[id]() : '').join('');
+  const page2Sections = order.slice(3).map(id => sectionRenderers[id] ? sectionRenderers[id]() : '').join('');
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${p.name || 'Sanket Kalathiya'} - Lead Flutter Developer - Resume</title>
+  <meta name="author" content="${p.name || 'Sanket Kalathiya'}">
+  <meta name="description" content="Resume of Sanket Kalathiya, Lead Flutter Developer & Mobile Architect with 6+ years of experience">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #000000;
+      background: #f1f5f9;
+      font-size: 8.9pt;
+      line-height: 1.28;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    .sheet {
+      width: 8.5in;
+      height: 11in;
+      margin: 20px auto;
+      background: #ffffff;
+      padding: 0.35in 0.45in;
+      box-sizing: border-box;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      page-break-after: always;
+      break-after: page;
+      overflow: hidden;
+    }
+    .sheet.page-2 {
+      page-break-after: auto;
+      break-after: auto;
+    }
+    header {
+      margin-bottom: 5px;
+    }
+    h1 {
+      font-size: 19pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+      word-spacing: normal;
+      line-height: 1.1;
+      margin-bottom: 1.5px;
+    }
+    .subtitle {
+      font-size: 11pt;
+      font-weight: bold;
+      letter-spacing: normal;
+      word-spacing: normal;
+      margin-bottom: 2px;
+    }
+    .contact-line {
+      font-size: 8.6pt;
+      line-height: 1.32;
+      letter-spacing: normal;
+      word-spacing: normal;
+    }
+    .contact-line a {
+      color: #000000;
+      text-decoration: none;
+    }
+    h2.section-title {
+      font-size: 10.2pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+      word-spacing: normal;
+      margin-top: 5px;
+      margin-bottom: 3px;
+      border-bottom: 1px solid #111111;
+      padding-bottom: 1px;
+    }
+    p.summary {
+      font-size: 8.7pt;
+      line-height: 1.28;
+      text-align: left;
+      letter-spacing: normal;
+      word-spacing: normal;
+      margin-bottom: 3px;
+    }
+    .skill-line {
+      font-size: 8.5pt;
+      line-height: 1.25;
+      margin-bottom: 1.5px;
+      text-align: left;
+      letter-spacing: normal;
+      word-spacing: normal;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    .role-heading, .proj-heading {
+      font-size: 8.9pt;
+      font-weight: bold;
+      line-height: 1.22;
+      letter-spacing: normal;
+      word-spacing: normal;
+      margin-top: 3.5px;
+      margin-bottom: 0.5px;
+    }
+    .proj-stack {
+      font-weight: normal;
+      font-size: 8.4pt;
+      color: #222222;
+      letter-spacing: normal;
+      word-spacing: normal;
+    }
+    .meta {
+      font-size: 8.5pt;
+      color: #222222;
+      letter-spacing: normal;
+      word-spacing: normal;
+      margin-bottom: 1.5px;
+    }
+    .exp-entry {
+      margin-bottom: 4px;
+    }
+    ul.bullets {
+      list-style-type: disc;
+      padding-left: 14px;
+      margin-bottom: 1px;
+    }
+    ul.bullets li {
+      font-size: 8.5pt;
+      line-height: 1.25;
+      margin-bottom: 1px;
+      text-align: left;
+      letter-spacing: normal;
+      word-spacing: normal;
+    }
+    .proj-entry {
+      margin-bottom: 7px;
+    }
+    .edu-entry {
+      margin-bottom: 4px;
+    }
+    .edu-heading-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .edu-heading-row .role-heading {
+      margin: 0;
+      font-size: 8.9pt;
+      font-weight: bold;
+      color: #000000;
+    }
+    .edu-sub-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 8.3pt;
+      color: #333333;
+      margin-top: 0.5px;
+      gap: 8px;
+    }
+    .edu-sub-row .grade {
+      color: #475569;
+      font-style: italic;
+    }
+    .edu-line {
+      font-size: 8.5pt;
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+    .no-print {
+      display: none;
+    }
+    @media print {
+      body {
+        background: #ffffff;
+        margin: 0;
+        padding: 0;
+      }
+      .sheet {
+        margin: 0;
+        box-shadow: none;
+        width: 8.5in;
+        height: 11in;
+      }
+      .sheet.page-1 {
+        page-break-after: always;
+        break-after: page;
+      }
+      .sheet.page-2 {
+        page-break-after: auto;
+        break-after: auto;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- PAGE 1 -->
+  <main class="sheet page-1">
+    <header>
+      <h1>${p.name || 'Sanket Kalathiya'}</h1>
+      <div class="subtitle">${p.title || 'Lead Flutter Developer'}</div>
+      <div class="contact-line">${p.location || ''} | ${p.phone || ''} | <a href="mailto:${p.email || ''}">${p.email || ''}</a></div>
+      <div class="contact-line">LinkedIn: <a href="${p.linkedin || ''}">${p.linkedin || ''}</a> | GitHub: <a href="${p.github || ''}">${p.github || ''}</a></div>
+    </header>
+
+    ${page1Sections}
+  </main>
+
+  <!-- PAGE 2 -->
+  <main class="sheet page-2">
+    ${page2Sections}
+  </main>
+</body>
+</html>`;
+}
+
+module.exports = {
+  generateHtml
+};

@@ -1,0 +1,22 @@
+{
+  "name": "resume-manager-local",
+  "version": "1.0.0",
+  "description": "Local offline-first Resume & Profile Management Studio for Sanket Kalathiya",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "test": "node tests/resume.test.js"
+  },
+  "keywords": [
+    "resume",
+    "flutter",
+    "local",
+    "ats"
+  ],
+  "author": "Sanket Kalathiya",
+  "license": "ISC",
+  "dependencies": {
+    "docx": "^9.7.1"
+  }
+}
