@@ -161,9 +161,9 @@ function generateHtml(raw) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${p.name || 'Sanket Kalathiya'} - Lead Flutter Developer - Resume</title>
-  <meta name="author" content="${p.name || 'Sanket Kalathiya'}">
-  <meta name="description" content="Resume of Sanket Kalathiya, Lead Flutter Developer & Mobile Architect with 6+ years of experience">
+  <title>${escapeHtml(p.name || 'Sanket Kalathiya')} - ${escapeHtml(p.title || 'Lead Flutter Developer')} - Resume</title>
+  <meta name="author" content="${escapeHtml(p.name || 'Sanket Kalathiya')}">
+  <meta name="description" content="${escapeHtml((p.name || 'Sanket Kalathiya') + ', ' + (p.title || 'Lead Flutter Developer') + ' resume')}">
   <style>
     * {
       box-sizing: border-box;

@@ -135,6 +135,7 @@ function normalizeResumeData(raw) {
   if (Array.isArray(rawSkills)) {
     normalized.skills = rawSkills.map(s => {
       if (typeof s === 'string') return { category: 'Core Skills', skills: s };
+      if (!s || typeof s !== 'object') return { category: 'Core Skills', skills: String(s || '') };
       return {
         category: s.category || s.title || s.name || 'Technical Domain',
         skills: s.skills || s.items || s.list || ''

@@ -1,5 +1,6 @@
 // Resume Studio — Local Storage Database & Data Loading Controller
 const DB_STORAGE_KEY = 'resume_studio_local_db';
+const DEFAULT_STORAGE_KEY = 'resume_studio_default_data';
 
 const LocalResumeDatabase = {
   get() {
@@ -22,6 +23,25 @@ const LocalResumeDatabase = {
       return false;
     }
   },
+  getDefault() {
+    try {
+      const raw = localStorage.getItem(DEFAULT_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      console.warn('Local default data read error:', e);
+      return null;
+    }
+  },
+  saveDefault(data) {
+    if (!data) return false;
+    try {
+      localStorage.setItem(DEFAULT_STORAGE_KEY, JSON.stringify(data));
+      return true;
+    } catch (e) {
+      console.error('Local default data save error:', e);
+      return false;
+    }
+  },
   clear() {
     try {
       localStorage.removeItem(DB_STORAGE_KEY);
@@ -37,6 +57,13 @@ window.LocalResumeDatabase = LocalResumeDatabase;
 
 // Asynchronously loads default data directly from src/data/resume-data.json (Single Source of Truth)
 async function loadDefaultSourceData() {
+  const localDefault = LocalResumeDatabase.getDefault();
+  if (localDefault) {
+    DEFAULT_RESUME_DATA = localDefault;
+    window.DEFAULT_RESUME_DATA = localDefault;
+    return normalizeResumeData(localDefault);
+  }
+
   try {
     const res = await fetch('/api/resume');
     if (res.ok) {

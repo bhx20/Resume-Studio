@@ -522,6 +522,132 @@ function setupToolbarActions() {
     };
   }
 
+  // Set Default JSON Template action
+  const btnSetDefault = document.getElementById('btn-set-default');
+  const defaultDataModal = document.getElementById('default-data-modal');
+  const defaultDataModalBox = document.getElementById('default-data-modal-box');
+  const defaultDataJson = document.getElementById('default-data-json');
+  const defaultDataCopy = document.getElementById('default-data-copy');
+  const defaultDataInfo = document.getElementById('default-data-info');
+  const defaultDataHelp = document.getElementById('default-data-help');
+  const defaultDataCancel = document.getElementById('default-data-cancel');
+  const defaultDataSave = document.getElementById('default-data-save');
+  const defaultDataClose = document.getElementById('default-data-modal-close');
+
+  function openDefaultDataModal() {
+    if (!defaultDataModal || !defaultDataJson) return;
+    const fallback = {
+      personal: {
+        name: 'Jane Doe',
+        title: 'Senior Product Engineer',
+        location: 'San Francisco, CA',
+        phone: '+1 (555) 123-4567',
+        email: 'jane@example.com',
+        linkedin: 'https://linkedin.com/in/jane-doe',
+        github: 'https://github.com/jane-doe'
+      },
+      summary: 'Experienced product engineer focused on building reliable, user-centered digital products.',
+      skills: [
+        { category: 'Frontend', skills: 'React, TypeScript, Next.js' },
+        { category: 'Backend', skills: 'Node.js, Express, PostgreSQL' }
+      ],
+      experience: [],
+      projects: [],
+      education: []
+    };
+    const currentValue = resumeData ? JSON.stringify(resumeData, null, 2) : JSON.stringify(fallback, null, 2);
+    defaultDataJson.textContent = currentValue;
+    defaultDataJson.style.height = '52vh';
+    defaultDataJson.style.maxHeight = '55vh';
+    defaultDataJson.style.minHeight = '220px';
+    defaultDataJson.style.overflow = 'auto';
+    defaultDataJson.style.whiteSpace = 'pre';
+    defaultDataJson.style.setProperty('overflow', 'auto', 'important');
+    defaultDataModal.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      if (defaultDataModalBox) {
+        defaultDataModalBox.classList.remove('scale-95', 'opacity-0');
+        defaultDataModalBox.classList.add('scale-100', 'opacity-100');
+      }
+    });
+  }
+
+  function closeDefaultDataModal() {
+    if (!defaultDataModal || !defaultDataModalBox) return;
+    defaultDataModalBox.classList.remove('scale-100', 'opacity-100');
+    defaultDataModalBox.classList.add('scale-95', 'opacity-0');
+    setTimeout(() => defaultDataModal.classList.add('hidden'), 150);
+  }
+
+  if (btnSetDefault) {
+    btnSetDefault.onclick = openDefaultDataModal;
+  }
+  if (defaultDataInfo && defaultDataHelp) {
+    defaultDataInfo.onclick = () => {
+      const isHidden = defaultDataHelp.classList.toggle('hidden');
+      defaultDataInfo.setAttribute('aria-expanded', String(!isHidden));
+    };
+  }
+  if (defaultDataCopy && defaultDataJson) {
+    defaultDataCopy.onclick = async () => {
+      const value = (defaultDataJson.textContent || '').trim();
+      if (!value) return;
+      try {
+        await navigator.clipboard.writeText(value);
+      } catch (err) {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(defaultDataJson);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        document.execCommand('copy');
+        selection.removeAllRanges();
+      }
+      showToast('Sample JSON copied. Change your data, paste it here, then save as default.');
+    };
+  }
+  if (defaultDataCancel) defaultDataCancel.onclick = closeDefaultDataModal;
+  if (defaultDataClose) defaultDataClose.onclick = closeDefaultDataModal;
+  if (defaultDataModal) {
+    defaultDataModal.addEventListener('click', (e) => {
+      if (e.target === defaultDataModal) closeDefaultDataModal();
+    });
+  }
+  if (defaultDataSave) {
+    defaultDataSave.onclick = async () => {
+      if (!defaultDataJson) return;
+      const raw = (defaultDataJson.textContent || '').trim();
+      if (!raw) {
+        alert('Paste or add a valid JSON object before saving.');
+        return;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+          throw new Error('The default resume data must be a JSON object.');
+        }
+        const normalized = normalizeResumeData(parsed);
+        if (!normalized || typeof normalized !== 'object') {
+          throw new Error('The JSON does not contain usable resume data.');
+        }
+        if (!LocalResumeDatabase.saveDefault(normalized)) {
+          throw new Error('Unable to save default resume data in local storage.');
+        }
+        DEFAULT_RESUME_DATA = normalized;
+        window.DEFAULT_RESUME_DATA = normalized;
+        resumeData = normalized;
+        LocalResumeDatabase.save(resumeData);
+        populateForm();
+        renderPages();
+        updateTabBadges();
+        closeDefaultDataModal();
+        showToast('Default resume template updated!');
+      } catch (err) {
+        alert(`Unable to save default resume template: ${err.message}`);
+      }
+    };
+  }
+
   // Reset Data for Currently Selected Section to Default Template (Section-Specific)
   const btnReset = document.getElementById('btn-reset');
   if (btnReset) {

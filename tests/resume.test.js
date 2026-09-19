@@ -63,6 +63,46 @@ async function runTests() {
     assert(defaultData.experience && defaultData.experience.length > 0, 'default template must have experience');
   });
 
+  const { handleApiRoutes } = require('../src/routes/resume.routes');
+  it('handleApiRoutes persists a custom default resume JSON payload as the new default template', () => {
+    const dataPath = path.join(__dirname, '..', 'src', 'data', 'resume-data.json');
+    const original = fs.readFileSync(dataPath, 'utf8');
+    const originalData = JSON.parse(original);
+    const customDefault = {
+      ...originalData,
+      personal: {
+        ...originalData.personal,
+        name: 'Custom Default User',
+        title: 'Product Engineer'
+      }
+    };
+
+    const req = {
+      method: 'POST',
+      url: '/api/resume/default',
+      on(event, cb) {
+        if (event === 'data') cb(Buffer.from(JSON.stringify(customDefault)));
+        if (event === 'end') cb();
+      }
+    };
+
+    const res = {
+      setHeader() {},
+      writeHead() {},
+      end(body) {
+        const payload = JSON.parse(body);
+        assert.strictEqual(payload.success, true, 'Default template save should succeed');
+        assert.strictEqual(payload.defaultResume.personal.name, 'Custom Default User');
+      }
+    };
+
+    assert.strictEqual(handleApiRoutes(req, res, '/api/resume/default'), true, 'Custom default route should be handled');
+
+    const updated = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+    assert.strictEqual(updated.personal.name, 'Custom Default User', 'Default template file should update');
+    fs.writeFileSync(dataPath, original, 'utf8');
+  });
+
   // 2. Helpers
   console.log('\n🛠️ 2. Testing Utility Helpers:');
   const { getCandidateFilename, escapeHtml, normalizeResumeData, formatSectionTitle } = require('../src/utils/helpers');
@@ -274,7 +314,7 @@ async function runTests() {
     const clientDir = path.join(rootDir, 'src', 'client');
     assert(fs.existsSync(clientDir), 'src/client must exist');
     const files = fs.readdirSync(clientDir).filter(f => !f.endsWith('.d.ts'));
-    assert.deepStrictEqual(files.sort(), ['app.js', 'index.html', 'js'], 'src/client/ must contain app.js, index.html, and js/ directory');
+    assert.deepStrictEqual(files.sort(), ['app.js', 'assets', 'index.html', 'js'], 'src/client/ must contain app.js, assets/, index.html, and js/ directory');
     assert(fs.existsSync(path.join(clientDir, 'js', 'state.js')), 'js/state.js must exist');
     assert(fs.existsSync(path.join(clientDir, 'js', 'utils.js')), 'js/utils.js must exist');
     assert(fs.existsSync(path.join(clientDir, 'js', 'db.js')), 'js/db.js must exist');

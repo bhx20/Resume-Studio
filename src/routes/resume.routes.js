@@ -5,6 +5,20 @@ const { createDocx } = require('../generators/docx.generator');
 const { generatePdfBuffer } = require('../generators/pdf.generator');
 const { getCandidateFilename } = require('../utils/helpers');
 
+function getDefaultResumeTemplate() {
+  try {
+    if (fs.existsSync(DATA_FILE)) {
+      const fileData = fs.readFileSync(DATA_FILE, 'utf8');
+      if (fileData && fileData.trim()) {
+        return JSON.parse(fileData);
+      }
+    }
+  } catch (err) {
+    console.warn('Could not read configured default resume template:', err.message);
+  }
+  return DEFAULT_RESUME || {};
+}
+
 /**
  * Dispatches API requests matching /api/* routes.
  * @param {import('http').IncomingMessage} req
@@ -29,10 +43,36 @@ function handleApiRoutes(req, res, pathname) {
 
   // POST /api/resume/reset
   if (req.method === 'POST' && pathname === '/api/resume/reset') {
-    const defaultContent = JSON.stringify(DEFAULT_RESUME, null, 2);
+    const defaultTemplate = getDefaultResumeTemplate();
+    const defaultContent = JSON.stringify(defaultTemplate, null, 2);
     fs.writeFileSync(DATA_FILE, defaultContent, 'utf8');
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(defaultContent);
+    return true;
+  }
+
+  // POST /api/resume/default
+  if (req.method === 'POST' && pathname === '/api/resume/default') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body || '{}');
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+          throw new Error('Default resume payload must be a JSON object.');
+        }
+        fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          message: 'Default resume template saved successfully.',
+          defaultResume: data
+        }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Invalid default resume JSON: ' + err.message }));
+      }
+    });
     return true;
   }
 

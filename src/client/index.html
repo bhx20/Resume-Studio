@@ -308,6 +308,24 @@
       min-height: 2.25rem;
       line-height: 1.45;
     }
+    #default-data-json {
+      overflow: auto !important;
+      overflow-y: auto !important;
+      overflow-x: auto !important;
+      flex: 1 1 auto !important;
+      height: 42vh !important;
+      max-height: 46vh !important;
+      min-height: 180px !important;
+      white-space: pre !important;
+      tab-size: 2 !important;
+    }
+
+    #default-data-modal-box {
+      max-height: 78vh !important;
+      width: min(720px, calc(100vw - 2rem)) !important;
+      max-width: 720px !important;
+      overflow: hidden !important;
+    }
 
     /* Sleek single scrollbar for drawer form container */
     #right-editor-panel [data-purpose="form-inputs-container"]::-webkit-scrollbar {
@@ -463,6 +481,17 @@
     .btn-section-add:active {
       transform: scale(0.96);
     }
+
+    #app-tour-card {
+      z-index: 72 !important;
+      transition: top 0.2s ease, left 0.2s ease;
+    }
+    .app-tour-target {
+      position: relative !important;
+      z-index: 71 !important;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.96), 0 0 0 8px rgba(37, 99, 235, 0.75), 0 12px 28px rgba(15, 23, 42, 0.22) !important;
+      border-radius: 0.75rem !important;
+    }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans antialiased h-screen flex flex-col overflow-hidden">
@@ -472,13 +501,7 @@
     <!-- App Branding & Status -->
     <div class="flex items-center space-x-4">
       <div class="flex items-center space-x-2">
-        <div class="bg-slate-900 text-white p-1.5 rounded-lg flex items-center justify-center font-bold text-sm">
-          <i class="fa-solid fa-file-lines"></i>
-        </div>
-        <div>
-          <h1 class="font-bold text-slate-900 text-sm leading-tight">Resume Studio</h1>
-          <p class="text-[10px] text-slate-500 font-medium">2026 Production Standard • 2-Page ATS Calibrated</p>
-        </div>
+        <img src="assets/logo.png" alt="Resume Studio" class="w-[180px] h-9 object-contain object-left" />
       </div>
     </div>
 
@@ -497,6 +520,18 @@
       <button id="btn-export-json" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition hover:border-amber-500 hover:text-amber-700" title="Export Resume Data as JSON file">
         <i class="fa-solid fa-file-export text-amber-600"></i>
         <span>Export JSON</span>
+      </button>
+
+      <!-- Set Default Resume JSON -->
+      <button id="btn-set-default" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition hover:border-violet-500 hover:text-violet-700" title="Set a custom JSON template as the default resume data">
+        <i class="fa-solid fa-database text-violet-600"></i>
+        <span>Set Default</span>
+      </button>
+
+      <!-- App Tour -->
+      <button id="btn-app-tour" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm transition hover:border-blue-500 hover:text-blue-700" title="Learn how to use Resume Studio">
+        <i class="fa-solid fa-circle-question text-blue-600"></i>
+        <span>Tour</span>
       </button>
 
       <!-- Download PDF -->
@@ -758,6 +793,49 @@
   </div>
   <!-- END: MainWorkspace -->
 
+  <!-- Default Resume Template Modal -->
+  <div id="default-data-modal" class="fixed inset-0 bg-slate-900/45 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full max-h-[85vh] p-4 space-y-3 transform transition-all duration-150 scale-95 opacity-0 flex flex-col" id="default-data-modal-box">
+      <div class="flex items-start justify-between gap-3 shrink-0">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <h3 class="text-base font-bold text-slate-900">Set Default Resume Data</h3>
+            <button id="default-data-info" type="button" class="w-5 h-5 rounded-full border border-slate-300 text-[11px] font-bold text-slate-500 hover:text-violet-700 hover:border-violet-400 hover:bg-violet-50 transition" title="How to set default data" aria-label="How to set default data" aria-expanded="false">i</button>
+          </div>
+          <p class="text-xs text-slate-600 mt-1">Paste a valid resume JSON object below. This becomes the template used for future resets and default loads.</p>
+          <div id="default-data-help" class="hidden mt-2 rounded-lg border border-violet-100 bg-violet-50 px-3 py-2 text-[11px] leading-relaxed text-slate-600">
+            <strong class="text-violet-700">How to set your default:</strong>
+            <ol class="list-decimal list-inside mt-1 space-y-0.5">
+              <li>Click <strong>Copy Sample JSON</strong> to copy the sample format.</li>
+              <li>Change your name, contact details, skills, experience, projects, and other data.</li>
+              <li>Paste the updated JSON into this box.</li>
+              <li>Check the data, then click <strong>Save as Default</strong>. Your preview and future resets will use it.</li>
+            </ol>
+          </div>
+        </div>
+        <button id="default-data-modal-close" type="button" class="text-slate-400 hover:text-slate-700 w-7 h-7 rounded-lg hover:bg-slate-200/80 flex items-center justify-center text-xs transition" title="Close modal">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+      <div class="flex items-center justify-between gap-2 shrink-0">
+        <span class="text-[11px] font-semibold text-slate-500">Resume JSON</span>
+        <button id="default-data-copy" type="button" class="px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 bg-white hover:bg-violet-50 border border-slate-300 hover:border-violet-400 rounded-lg transition flex items-center gap-1.5" title="Copy the sample JSON template" aria-label="Copy sample JSON">
+          <i class="fa-solid fa-copy text-violet-600"></i>
+          <span>Copy Sample JSON</span>
+        </button>
+      </div>
+      <div id="default-data-json" contenteditable="true" spellcheck="false" class="w-full min-h-[220px] bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-[11px] text-slate-800 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-600 transition block" style="height:52vh; max-height:55vh; overflow:auto; white-space:pre; outline:none; line-height:1.5; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">
+      </div>
+      <div class="flex justify-end gap-2.5 pt-2 border-t border-slate-100 shrink-0">
+        <button id="default-data-cancel" type="button" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition">Cancel</button>
+        <button id="default-data-save" type="button" class="px-4 py-2 text-xs font-semibold text-white bg-violet-600 hover:bg-violet-700 rounded-xl shadow-sm transition flex items-center gap-1.5">
+          <i class="fa-solid fa-floppy-disk text-[11px]"></i>
+          <span>Save as Default</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Custom Confirmation Dialog Modal ("Our Dialog") -->
   <div id="confirm-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
     <div id="confirm-modal-box" class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4 transform transition-all duration-150 scale-95 opacity-0">
@@ -790,6 +868,30 @@
     <span id="toast-text">Saved to disk!</span>
   </div>
 
+  <!-- Guided App Tour -->
+  <div id="app-tour" class="fixed inset-0 z-[70] hidden" aria-hidden="true">
+    <div id="app-tour-backdrop" class="absolute inset-0 bg-transparent"></div>
+    <div id="app-tour-card" class="absolute w-[min(360px,calc(100vw-2rem))] bg-white border border-slate-200 rounded-2xl shadow-2xl p-5" role="dialog" aria-modal="true" aria-labelledby="app-tour-title">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p id="app-tour-step" class="text-[10px] font-bold uppercase tracking-wider text-blue-600">Step 1 of 8</p>
+          <h2 id="app-tour-title" class="text-base font-bold text-slate-900 mt-1">Build your resume</h2>
+        </div>
+        <button id="app-tour-close" type="button" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition" title="Skip tour" aria-label="Skip tour">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <p id="app-tour-description" class="text-xs leading-relaxed text-slate-600 mt-3"></p>
+      <div class="flex items-center justify-between gap-3 border-t border-slate-100 mt-4 pt-3">
+        <button id="app-tour-skip" type="button" class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition">Skip tour</button>
+        <div class="flex items-center gap-2">
+          <button id="app-tour-back" type="button" class="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition hidden">Back</button>
+          <button id="app-tour-next" type="button" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Core Application Scripts (Decoupled Modular Architecture) -->
   <script src="js/state.js"></script>
   <script src="js/utils.js"></script>
@@ -802,6 +904,7 @@
   <script src="js/editors/edu-editor.js"></script>
   <script src="js/editors/custom-editor.js"></script>
   <script src="js/toolbar.js"></script>
+  <script src="js/tour.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
