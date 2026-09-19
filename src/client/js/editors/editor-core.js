@@ -117,7 +117,7 @@ function setupEditorPanelControls() {
     if (e.target.closest('.resume-section')) return;
 
     // If clicked inside interactive controls (like modals, toasts, zoom controls, inputs)
-    if (e.target.closest('#btn-toggle-editor, #toast-container, .modal-backdrop, [role="dialog"], #btn-zoom-in, #btn-zoom-out, #btn-zoom-reset, #inp-import-json')) return;
+    if (e.target.closest('#btn-toggle-editor, #toast-container, .modal-backdrop, [role="dialog"], #btn-zoom-in, #btn-zoom-out, #btn-zoom-reset')) return;
 
     // Tapped outside! Deselect all items and close the right panel
     closeEditorPanel();

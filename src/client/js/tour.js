@@ -31,11 +31,6 @@
       description: 'Drag a section by its drag handle to change its order. The preview updates immediately, and the new order is saved locally.'
     },
     {
-      target: '#btn-import-json',
-      title: 'Import existing JSON',
-      description: 'Already have resume data? Import a JSON file to load it into the editor. The data is normalized and saved locally.'
-    },
-    {
       target: '#btn-set-default',
       title: 'Set your default template',
       description: 'Use Set Default to copy the sample JSON, change your data, paste it back, and save it as the template used by future section resets.'
@@ -44,11 +39,6 @@
       target: '#save-status',
       title: 'Automatic local saving',
       description: 'You do not need an API or a separate Save button. Resume edits are saved automatically in your browser local database.'
-    },
-    {
-      target: '#btn-export-json',
-      title: 'Export your JSON',
-      description: 'Export JSON creates a backup of your current resume data that you can keep or import later.'
     },
     {
       target: '#btn-download-pdf',

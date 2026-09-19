@@ -1,5 +1,5 @@
 // public/js/toolbar.js
-// Toolbar actions: Zoom, Print/PDF, DOC, Import/Export JSON, Markdown, Plain Text, Section Reset, Drag Auto-Scroll
+// Toolbar actions: Zoom, Print/PDF, DOC, Markdown, Plain Text, Section Reset, Drag Auto-Scroll
 
 let autoScrollAnimFrame = null;
 let autoScrollSpeed = 0;
@@ -437,79 +437,6 @@ function downloadWordHtml(data) {
 }
 
 function setupToolbarActions() {
-  // Import JSON Action
-  const btnImportJson = document.getElementById('btn-import-json');
-  const inpImportJson = document.getElementById('inp-import-json');
-  if (btnImportJson && inpImportJson) {
-    btnImportJson.onclick = () => {
-      inpImportJson.value = '';
-      inpImportJson.click();
-    };
-    inpImportJson.onchange = (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const parsed = JSON.parse(String(event.target.result));
-          applyImportedJson(parsed, file.name);
-        } catch (parseErr) {
-          alert(`Invalid JSON file: ${parseErr.message}`);
-        }
-      };
-      reader.onerror = () => {
-        alert('Failed to read selected JSON file.');
-      };
-      reader.readAsText(file);
-    };
-  }
-
-  // Window-wide Drag & Drop for JSON files
-  window.addEventListener('dragover', (e) => {
-    e.preventDefault();
-  });
-  window.addEventListener('drop', (e) => {
-    e.preventDefault();
-    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0];
-      if (file.name.toLowerCase().endsWith('.json') || file.type === 'application/json') {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          try {
-            const parsed = JSON.parse(String(event.target.result));
-            applyImportedJson(parsed, file.name);
-          } catch (err) {
-            alert(`Could not import dropped file: ${err.message}`);
-          }
-        };
-        reader.readAsText(file);
-      }
-    }
-  });
-
-  // Export JSON Action
-  const btnExportJson = document.getElementById('btn-export-json');
-  if (btnExportJson) {
-    btnExportJson.onclick = () => {
-      if (!resumeData) return;
-      syncActiveFormFields();
-      
-      const jsonStr = JSON.stringify(resumeData, null, 2);
-      const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      const candidateName = (resumeData.personal?.name || 'Resume').trim().replace(/[^a-zA-Z0-9_-]/g, '_');
-      const fileName = `${candidateName}_Resume.json`;
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showToast(`Exported ${fileName} successfully!`);
-    };
-  }
-
   // Save to Local Database (Zero Backend)
   const btnSave = document.getElementById('btn-save');
   if (btnSave) {

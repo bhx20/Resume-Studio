@@ -208,32 +208,3 @@ function syncActiveFormFields() {
   if (summaryEl) resumeData.summary = summaryEl.value;
 }
 
-// Dynamically Apply Imported JSON Resume Data
-async function applyImportedJson(json, fileName) {
-  try {
-    if (!json || typeof json !== 'object') {
-      throw new Error('Selected file does not contain a valid JSON object.');
-    }
-
-    resumeData = normalizeResumeData(json);
-
-    populateForm();
-    renderPages();
-    updateTabBadges();
-
-    try {
-      localStorage.setItem('resumeData', JSON.stringify(resumeData));
-    } catch (e) {}
-
-    const statusEl = document.getElementById('save-status');
-    if (statusEl) statusEl.textContent = 'Saving imported JSON to disk...';
-
-    LocalResumeDatabase.save(resumeData);
-    if (statusEl) statusEl.textContent = 'Saved to local database';
-    showToast(`Imported "${fileName || 'Resume.json'}" and saved to local database!`);
-  } catch (err) {
-    console.error('Import error:', err);
-    alert(`Import failed: ${err.message}`);
-  }
-}
-window.applyImportedJson = applyImportedJson;
