@@ -646,13 +646,36 @@ function setupToolbarActions() {
     };
   }
 
-  // Download DOC (Microsoft Word format via client engine)
+  // Download DOC (True OpenXML .docx from backend API with offline .doc fallback)
   const btnDownloadDoc = document.getElementById('btn-download-doc');
   if (btnDownloadDoc) {
-    btnDownloadDoc.onclick = () => {
+    btnDownloadDoc.onclick = async () => {
       syncActiveFormFields();
       LocalResumeDatabase.save(resumeData);
-      showToast('Generating Word Document (.doc)...');
+      showToast('Generating Word Document (.docx)...');
+      try {
+        const res = await fetch('/api/download/docx', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(resumeData)
+        });
+        if (res.ok) {
+          const blob = await res.blob();
+          const fileName = getCandidateFilename(resumeData, 'docx');
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showToast(`Downloaded ${fileName}!`);
+          return;
+        }
+      } catch (e) {
+        console.warn('Backend DOCX generator offline, falling back to client DOC export:', e);
+      }
       downloadWordHtml(resumeData);
     };
   }

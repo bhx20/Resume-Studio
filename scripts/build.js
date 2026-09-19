@@ -43,8 +43,8 @@ fs.copyFileSync(dataFile, path.join(distSrcDataDir, 'resume-data.json'));
 
 // 4. Generate _redirects for Netlify
 const redirectsContent = `# Netlify Redirects for SPA and API
-/api/*          /.netlify/functions/api/:splat  200
 /api/resume     /data/resume-data.json          200
+/api/*          /.netlify/functions/api/:splat  200
 /*              /index.html                     200
 `;
 fs.writeFileSync(path.join(distDir, '_redirects'), redirectsContent, 'utf8');

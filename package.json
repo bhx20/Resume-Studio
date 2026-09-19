@@ -1,7 +1,7 @@
 {
-  "name": "resume-manager-local",
+  "name": "resume-studio",
   "version": "1.0.0",
-  "description": "Local offline-first Resume & Profile Management Studio for Sanket Kalathiya",
+  "description": "Production-ready, ATS-calibrated 2-page resume studio and document generation engine",
   "main": "src/server.js",
   "scripts": {
     "build": "node scripts/build.js",
@@ -9,14 +9,25 @@
     "dev": "node src/server.js",
     "test": "node tests/resume.test.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bhx20/Resume-Studio.git"
+  },
+  "homepage": "https://github.com/bhx20/Resume-Studio#readme",
+  "bugs": {
+    "url": "https://github.com/bhx20/Resume-Studio/issues"
+  },
   "keywords": [
     "resume",
-    "flutter",
-    "local",
-    "ats"
+    "ats",
+    "resume-builder",
+    "pdf-generator",
+    "docx-generator",
+    "offline-first",
+    "flutter"
   ],
-  "author": "Sanket Kalathiya",
-  "license": "ISC",
+  "author": "Sanket Kalathiya (https://github.com/bhx20)",
+  "license": "Apache-2.0",
   "dependencies": {
     "docx": "^9.7.1"
   }

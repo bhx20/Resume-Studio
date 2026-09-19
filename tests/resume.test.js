@@ -138,6 +138,26 @@ async function runTests() {
     assert(html.includes('Kubernetes CKAD'), 'HTML must render custom certification items');
   });
 
+  it('html.generator escapes XSS injections across all candidate fields', () => {
+    const maliciousData = {
+      personal: { name: '<script>alert(1)</script>' },
+      summary: '<img src=x onerror=alert(2)>',
+      experience: [
+        {
+          company: '<b>Corp</b>',
+          role: '<i>Lead</i>',
+          bullets: ['<svg onload=alert(3)>']
+        }
+      ]
+    };
+    const html = generateHtml(maliciousData);
+    assert(!html.includes('<script>alert(1)</script>'), 'HTML must not contain raw script tags');
+    assert(!html.includes('<img src=x onerror=alert(2)>'), 'HTML must not contain raw img tags');
+    assert(!html.includes('<svg onload=alert(3)>'), 'HTML must not contain raw svg tags');
+    assert(html.includes('&lt;script&gt;alert(1)&lt;/script&gt;'), 'Name must be HTML escaped');
+    assert(html.includes('&lt;img src=x onerror=alert(2)&gt;'), 'Summary must be HTML escaped');
+  });
+
   const { createDocx } = require('../src/generators/docx.generator');
   await itAsync('docx.generator creates valid Word document buffer in memory including custom sections', async () => {
     const dataWithCustom = {

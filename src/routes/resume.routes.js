@@ -67,7 +67,6 @@ function handleApiRoutes(req, res, pathname) {
         try {
           if (body) {
             const data = JSON.parse(body);
-            fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
             const fileName = getCandidateFilename(data, 'json');
             const formatted = JSON.stringify(data, null, 2);
             res.writeHead(200, {
@@ -129,9 +128,6 @@ function handleApiRoutes(req, res, pathname) {
       req.on('end', () => {
         try {
           const data = body ? JSON.parse(body) : JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-          if (body) {
-            fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
-          }
           handlePdf(data);
         } catch (e) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -181,9 +177,6 @@ function handleApiRoutes(req, res, pathname) {
       req.on('end', () => {
         try {
           const data = body ? JSON.parse(body) : JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-          if (body) {
-            fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
-          }
           handleDocx(data);
         } catch (e) {
           res.writeHead(400, { 'Content-Type': 'application/json' });

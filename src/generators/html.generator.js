@@ -6,25 +6,25 @@ function generateHtml(raw) {
 
   const skillsHtml = (data.skills || []).map(s => `
     <div class="skill-line">
-      <strong class="bold">${s.category}:</strong> ${s.skills}
+      <strong class="bold">${escapeHtml(s.category)}:</strong> ${escapeHtml(s.skills)}
     </div>
   `).join('');
 
   const expHtml = (data.experience || []).map(e => `
     <article class="exp-entry">
-      <h3 class="role-heading bold">${e.company || ''} | ${e.role || ''}</h3>
-      <div class="meta">${e.period || ''}${e.location ? ' | ' + e.location : ''}</div>
+      <h3 class="role-heading bold">${escapeHtml(e.company || '')} | ${escapeHtml(e.role || '')}</h3>
+      <div class="meta">${escapeHtml(e.period || '')}${e.location ? ' | ' + escapeHtml(e.location) : ''}</div>
       <ul class="bullets">
-        ${(e.bullets || []).map(b => `<li>${b}</li>`).join('')}
+        ${(e.bullets || []).map(b => `<li>${escapeHtml(b)}</li>`).join('')}
       </ul>
     </article>
   `).join('');
 
   const projHtml = (data.projects || []).map(proj => `
     <article class="proj-entry">
-      <h3 class="proj-heading bold">${proj.title || ''}${proj.tech ? ' | <span class="proj-stack">' + proj.tech + '</span>' : ''}</h3>
+      <h3 class="proj-heading bold">${escapeHtml(proj.title || '')}${proj.tech ? ' | <span class="proj-stack">' + escapeHtml(proj.tech) + '</span>' : ''}</h3>
       <ul class="bullets">
-        ${(proj.bullets || []).map(b => `<li>${b}</li>`).join('')}
+        ${(proj.bullets || []).map(b => `<li>${escapeHtml(b)}</li>`).join('')}
       </ul>
     </article>
   `).join('');
@@ -34,7 +34,7 @@ function generateHtml(raw) {
     <section>
       <h2 class="section-title">${escapeHtml(getSectionTitle(data, 'achievements', 'CORE ENGINEERING & ACHIEVEMENTS').toUpperCase())}</h2>
       <ul class="bullets" style="margin-bottom: 8px;">
-        ${achievements.map(a => `<li>${a}</li>`).join('')}
+        ${achievements.map(a => `<li>${escapeHtml(a)}</li>`).join('')}
       </ul>
     </section>
   ` : '';
@@ -45,7 +45,7 @@ function generateHtml(raw) {
     summary: () => `
       <section>
         <h2 class="section-title">${escapeHtml(getSectionTitle(data, 'summary', 'PROFESSIONAL SUMMARY').toUpperCase())}</h2>
-        <p class="summary">${data.summary || ''}</p>
+        <p class="summary">${escapeHtml(data.summary || '')}</p>
       </section>
     `,
     skills: () => `
@@ -95,10 +95,10 @@ function generateHtml(raw) {
   // Estimate block heights for A4 pagination (usable height ~1018px)
   const headerHtml = `
     <header>
-      <h1>${p.name || 'Sanket Kalathiya'}</h1>
-      <div class="subtitle">${p.title || 'Lead Flutter Developer'}</div>
-      <div class="contact-line">${p.location || ''} | ${p.phone || ''} | <a href="mailto:${p.email || ''}">${p.email || ''}</a></div>
-      <div class="contact-line">LinkedIn: <a href="${p.linkedin || ''}">${p.linkedin || ''}</a> | GitHub: <a href="${p.github || ''}">${p.github || ''}</a></div>
+      <h1>${escapeHtml(p.name || 'Sanket Kalathiya')}</h1>
+      <div class="subtitle">${escapeHtml(p.title || 'Lead Flutter Developer')}</div>
+      <div class="contact-line">${escapeHtml(p.location || '')} | ${escapeHtml(p.phone || '')} | <a href="mailto:${escapeHtml(p.email || '')}">${escapeHtml(p.email || '')}</a></div>
+      <div class="contact-line">LinkedIn: <a href="${escapeHtml(p.linkedin || '')}">${escapeHtml(p.linkedin || '')}</a> | GitHub: <a href="${escapeHtml(p.github || '')}">${escapeHtml(p.github || '')}</a></div>
     </header>
   `;
 
