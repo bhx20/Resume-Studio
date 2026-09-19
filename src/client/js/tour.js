@@ -65,26 +65,11 @@
     activeTarget = null;
   }
 
-  function positionCard(target) {
-    const rect = target ? target.getBoundingClientRect() : null;
-    const cardRect = card.getBoundingClientRect();
-    const margin = 16;
-    let left = window.innerWidth - cardRect.width - margin;
-    let top = Math.max(margin, (window.innerHeight - cardRect.height) / 2);
-
-    if (rect) {
-      const belowTop = rect.bottom + 18;
-      const aboveTop = rect.top - cardRect.height - 18;
-      if (belowTop + cardRect.height <= window.innerHeight - margin) {
-        top = belowTop;
-      } else if (aboveTop >= margin) {
-        top = aboveTop;
-      }
-      left = Math.min(Math.max(margin, rect.left), window.innerWidth - cardRect.width - margin);
-    }
-
-    card.style.left = `${left}px`;
-    card.style.top = `${top}px`;
+  function positionCard() {
+    card.style.setProperty('left', 'auto', 'important');
+    card.style.setProperty('top', '72px', 'important');
+    card.style.setProperty('right', '16px', 'important');
+    card.style.setProperty('transform', 'none', 'important');
   }
 
   function renderStep() {
@@ -100,7 +85,7 @@
     backButton.classList.toggle('hidden', currentStep === 0);
     nextButton.textContent = currentStep === steps.length - 1 ? 'Finish' : 'Next';
 
-    requestAnimationFrame(() => positionCard(target));
+    positionCard();
   }
 
   function closeTour(completed) {
@@ -137,7 +122,7 @@
   skipButton.addEventListener('click', () => closeTour(true));
   tourButton?.addEventListener('click', openTour);
   window.addEventListener('resize', () => {
-    if (!tour.classList.contains('hidden')) positionCard(activeTarget);
+    if (!tour.classList.contains('hidden')) positionCard();
   });
 
   if (!localStorage.getItem(TOUR_STORAGE_KEY)) {
