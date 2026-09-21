@@ -30,6 +30,7 @@
       description: 'Your resume is rendered across exact A4 pages with calibrated margins and typography. What you see here reflects the exact print output—pixel-perfect with zero awkward overflows.',
       placement: 'right',
       pad: 12,
+      cardAlign: 'center',
       action: () => {
         if (typeof closeEditorPanel === 'function') closeEditorPanel();
         const scroller = document.querySelector('div[data-purpose="document-canvas-scroll"]');
@@ -42,6 +43,7 @@
       description: 'Hover over any section on your resume and click anywhere on it to open its dedicated editing drawer. Try clicking your name or contact info to customize them.',
       placement: 'bottom',
       pad: 8,
+      cardAlign: 'center',
       action: () => {
         if (typeof closeEditorPanel === 'function') closeEditorPanel();
         const el = document.querySelector('header.resume-section[data-section-id="personal"]');
@@ -53,7 +55,8 @@
       title: 'Contextual Editor Drawer',
       description: 'Every section opens in this sleek side drawer with auto-expanding form fields. Edits synchronize immediately with the canvas and persist safely in your browser database.',
       placement: 'left',
-      pad: 4,
+      cardAlign: 'top',
+      pad: 0, // Flush boundaries with drawer perimeter to prevent gaps or offscreen clipping
       action: () => {
         if (typeof openSectionEditor === 'function') {
           openSectionEditor('personal');
@@ -67,6 +70,7 @@
       description: 'Grab any section by its DRAG handle to reorder sections effortlessly. The document flow and pagination instantly recalibrate across pages.',
       placement: 'bottom',
       pad: 8,
+      cardAlign: 'center',
       action: () => {
         if (typeof closeEditorPanel === 'function') closeEditorPanel();
         const handle = document.querySelector('.resume-section[data-section-id="summary"] .section-drag-handle') || document.querySelector('.section-drag-handle');
@@ -81,6 +85,7 @@
       description: 'Rename any section title directly on the canvas or via this drawer input (e.g. "TECHNICAL SKILLS MATRIX" or "SUMMARY") to match ATS keywords from target job descriptions.',
       placement: 'left',
       pad: 6,
+      cardAlign: 'top',
       action: () => {
         if (typeof openSectionEditor === 'function') {
           openSectionEditor('summary');
@@ -93,6 +98,7 @@
       description: 'Customize your master resume JSON and save it as your default template. You can reset individual sections or the entire resume whenever you want a fresh start.',
       placement: 'bottom',
       pad: 8,
+      cardAlign: 'center',
       action: () => {
         if (typeof closeEditorPanel === 'function') closeEditorPanel();
       }
@@ -104,6 +110,7 @@
       description: 'The page fit badge monitors your content height budget in real time to guarantee standard A4 delivery. Use zoom controls or Ctrl+Scroll to inspect layout details.',
       placement: 'top',
       pad: 8,
+      cardAlign: 'center',
       action: () => {
         if (typeof closeEditorPanel === 'function') closeEditorPanel();
       }
@@ -114,6 +121,7 @@
       description: 'Export print-ready, high-resolution vector PDFs via server-side headless Chrome, or download fully editable Microsoft Word (.docx) documents with one click!',
       placement: 'bottom',
       pad: 8,
+      cardAlign: 'center',
       action: () => {
         if (typeof closeEditorPanel === 'function') closeEditorPanel();
       }
@@ -148,7 +156,7 @@
     });
   }
 
-  function positionCardAndSpotlight(targetEl, preferredPlacement = 'auto', customPad = 8) {
+  function positionCardAndSpotlight(targetEl, preferredPlacement = 'auto', customPad = 8, cardAlign = 'center') {
     const viewW = window.innerWidth;
     const viewH = window.innerHeight;
 
@@ -164,13 +172,27 @@
     const targetRect = targetEl.getBoundingClientRect();
     const pad = customPad;
 
-    // 1. Update Spotlight
+    // 1. Update Spotlight with boundary clamping
     if (spotlightEl) {
       spotlightEl.style.display = 'block';
-      spotlightEl.style.top = `${Math.max(0, targetRect.top - pad)}px`;
-      spotlightEl.style.left = `${Math.max(0, targetRect.left - pad)}px`;
-      spotlightEl.style.width = `${Math.min(viewW, targetRect.width + pad * 2)}px`;
-      spotlightEl.style.height = `${Math.min(viewH, targetRect.height + pad * 2)}px`;
+      let sTop = Math.max(0, targetRect.top - pad);
+      let sLeft = Math.max(0, targetRect.left - pad);
+      let sWidth = targetRect.width + pad * 2;
+      let sHeight = targetRect.height + pad * 2;
+
+      // Ensure spotlight stays strictly inside the viewport boundaries
+      if (sLeft + sWidth > viewW) {
+        sWidth = Math.max(0, viewW - sLeft);
+      }
+      if (sTop + sHeight > viewH) {
+        sHeight = Math.max(0, viewH - sTop);
+      }
+
+      spotlightEl.style.top = `${sTop}px`;
+      spotlightEl.style.left = `${sLeft}px`;
+      spotlightEl.style.width = `${sWidth}px`;
+      spotlightEl.style.height = `${sHeight}px`;
+
       const computedRadius = window.getComputedStyle(targetEl).borderRadius;
       spotlightEl.style.borderRadius = computedRadius && computedRadius !== '0px' ? computedRadius : '12px';
     }
@@ -212,10 +234,18 @@
       top = targetRect.top - cardH - margin;
       left = targetRect.left + (targetRect.width - cardW) / 2;
     } else if (placement === 'left') {
-      top = targetRect.top + (targetRect.height - cardH) / 2;
+      if (cardAlign === 'top') {
+        top = Math.max(16, targetRect.top + 20);
+      } else {
+        top = targetRect.top + (targetRect.height - cardH) / 2;
+      }
       left = targetRect.left - cardW - margin;
     } else if (placement === 'right') {
-      top = targetRect.top + (targetRect.height - cardH) / 2;
+      if (cardAlign === 'top') {
+        top = Math.max(16, targetRect.top + 20);
+      } else {
+        top = targetRect.top + (targetRect.height - cardH) / 2;
+      }
       left = targetRect.right + margin;
     }
 
@@ -263,7 +293,7 @@
     const step = steps[currentStepIndex];
     if (!step) return;
     const target = getTargetElement(step);
-    positionCardAndSpotlight(target, step.placement, step.pad);
+    positionCardAndSpotlight(target, step.placement, step.pad, step.cardAlign);
   }
 
   function goToStep(index) {
@@ -295,17 +325,30 @@
       step.action();
     }
 
-    // Allow UI animation (drawer slide / scroll) to settle, then position spotlight & card
+    // Immediate initial positioning
+    const immediateTarget = getTargetElement(step);
+    activeTargetElement = immediateTarget;
+    positionCardAndSpotlight(immediateTarget, step.placement, step.pad, step.cardAlign);
+
+    // Intermediate tracking during drawer slide or smooth scroll
     setTimeout(() => {
-      const target = getTargetElement(step);
-      activeTargetElement = target;
-      positionCardAndSpotlight(target, step.placement, step.pad);
-    }, 180);
+      const midTarget = getTargetElement(step);
+      activeTargetElement = midTarget;
+      positionCardAndSpotlight(midTarget, step.placement, step.pad, step.cardAlign);
+    }, 140);
+
+    // Final precision position after drawer transition (350ms) has fully finished
+    setTimeout(() => {
+      const finalTarget = getTargetElement(step);
+      activeTargetElement = finalTarget;
+      positionCardAndSpotlight(finalTarget, step.placement, step.pad, step.cardAlign);
+    }, 380);
   }
 
   function openTour() {
     isTourActive = true;
     currentStepIndex = 0;
+    document.body.classList.add('tour-active');
     tourEl.classList.remove('hidden');
     tourEl.setAttribute('aria-hidden', 'false');
     goToStep(0);
@@ -314,6 +357,7 @@
   function closeTour(completed = false) {
     isTourActive = false;
     activeTargetElement = null;
+    document.body.classList.remove('tour-active');
     tourEl.classList.add('hidden');
     tourEl.setAttribute('aria-hidden', 'true');
     if (spotlightEl) spotlightEl.style.display = 'none';
@@ -374,12 +418,20 @@
     }
   });
 
+  // Listen to right editor panel transition end to guarantee pixel-perfect bounds
+  const rightPanelEl = document.getElementById('right-editor-panel');
+  if (rightPanelEl) {
+    rightPanelEl.addEventListener('transitionend', () => {
+      if (isTourActive) updateActivePosition();
+    });
+  }
+
   // Resize & Scroll listeners
   let resizeTimer = null;
   window.addEventListener('resize', () => {
     if (!isTourActive) return;
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(updateActivePosition, 50);
+    resizeTimer = setTimeout(updateActivePosition, 40);
   });
 
   const canvasScroll = document.querySelector('div[data-purpose="document-canvas-scroll"]');

@@ -513,6 +513,12 @@
       width: 22px;
       background-color: #2563eb;
     }
+
+    /* Suppress canvas active-editing outline during guided tour so only the spotlighted target is highlighted */
+    body.tour-active .resume-section.active-editing {
+      outline: none !important;
+      background-color: transparent !important;
+    }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans antialiased h-screen flex flex-col overflow-hidden">
