@@ -549,15 +549,17 @@
   window.startAppTour = openTour;
   window.closeAppTour = closeTour;
 
-  // Auto-prompt Welcome Screen for first-time visitors
+  // Auto-prompt Welcome Screen for first-time visitors (or with ?welcome or #welcome)
   window.addEventListener('DOMContentLoaded', () => {
     try {
-      if (!localStorage.getItem(WELCOME_STORAGE_KEY)) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const forceWelcome = urlParams.has('welcome') || window.location.hash === '#welcome';
+      if (forceWelcome || !localStorage.getItem(WELCOME_STORAGE_KEY)) {
         setTimeout(() => {
           if (!isTourActive && tourEl.classList.contains('hidden')) {
             showWelcomeModal();
           }
-        }, 400);
+        }, 350);
       }
     } catch (e) {
       // Ignore
