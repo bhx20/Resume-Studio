@@ -39,6 +39,16 @@ function createAppServer() {
       return;
     }
 
+    // Favicon Fallback Handler
+    if (pathname === '/favicon.ico' || pathname === '/fevicon.png') {
+      const faviconPath = path.join(CLIENT_DIR, 'assets', 'fevicon.png');
+      if (fs.existsSync(faviconPath)) {
+        res.writeHead(200, { 'Content-Type': 'image/png' });
+        fs.createReadStream(faviconPath).pipe(res);
+        return;
+      }
+    }
+
     // 2. Serve Frontend Static Assets securely from src/client/
     const staticRoot = path.resolve(CLIENT_DIR || PUBLIC_DIR);
     const relativeRequest = pathname === '/' ? '/index.html' : pathname;
