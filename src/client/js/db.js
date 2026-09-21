@@ -58,15 +58,13 @@ window.LocalResumeDatabase = LocalResumeDatabase;
 // Asynchronously loads default data directly from static data files
 async function loadDefaultSourceData() {
   const localDefault = LocalResumeDatabase.getDefault();
-  if (localDefault) {
+  if (localDefault && localDefault.personal && localDefault.personal.name && !localDefault.personal.name.includes('Sanket')) {
     DEFAULT_RESUME_DATA = localDefault;
     window.DEFAULT_RESUME_DATA = localDefault;
     return normalizeResumeData(localDefault);
   }
 
   const candidatePaths = [
-    '/data/resume-data.personal.json',
-    'data/resume-data.personal.json',
     '/data/resume-data.json',
     'data/resume-data.json',
     '../src/data/resume-data.json'

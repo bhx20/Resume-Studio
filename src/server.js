@@ -31,17 +31,7 @@ function createAppServer() {
       const dataDir = path.join(SRC_DIR, 'data');
       const filename = path.basename(pathname);
 
-      // Prefer local personal resume if resume-data.json is requested and personal copy exists
-      let targetPath = path.join(dataDir, filename);
-      if (filename === 'resume-data.json') {
-        const personalFile = path.join(dataDir, 'resume-data.personal.json');
-        const localFile = path.join(dataDir, 'resume-data.local.json');
-        if (fs.existsSync(personalFile)) {
-          targetPath = personalFile;
-        } else if (fs.existsSync(localFile)) {
-          targetPath = localFile;
-        }
-      }
+      const targetPath = path.join(dataDir, filename);
 
       const safeDataPath = path.resolve(targetPath);
       if (!safeDataPath.startsWith(dataDir) || !fs.existsSync(safeDataPath)) {

@@ -461,28 +461,51 @@ function setupToolbarActions() {
   const defaultDataSave = document.getElementById('default-data-save');
   const defaultDataClose = document.getElementById('default-data-modal-close');
 
-  function openDefaultDataModal() {
+  async function openDefaultDataModal() {
     if (!defaultDataModal || !defaultDataJson) return;
+
+    let sampleTemplate = null;
+    try {
+      const res = await fetch('/data/resume-data.json');
+      if (res.ok) {
+        sampleTemplate = await res.json();
+      }
+    } catch (_) {}
+
+    if (!sampleTemplate) {
+      try {
+        const res = await fetch('data/resume-data.json');
+        if (res.ok) {
+          sampleTemplate = await res.json();
+        }
+      } catch (_) {}
+    }
+
+    if (!sampleTemplate && window.DEFAULT_RESUME_DATA && window.DEFAULT_RESUME_DATA.personal && !window.DEFAULT_RESUME_DATA.personal.name.includes('Sanket')) {
+      sampleTemplate = window.DEFAULT_RESUME_DATA;
+    }
+
     const fallback = {
       personal: {
-        name: 'Jane Doe',
-        title: 'Senior Product Engineer',
+        name: 'Alex Morgan',
+        title: 'Staff Software Engineer & Cloud Architect | Distributed Systems',
         location: 'San Francisco, CA',
-        phone: '+1 (555) 123-4567',
-        email: 'jane@example.com',
-        linkedin: 'https://linkedin.com/in/jane-doe',
-        github: 'https://github.com/jane-doe'
+        phone: '+1 (555) 019-2834',
+        email: 'alex.morgan.dev@example.com',
+        linkedin: 'https://www.linkedin.com/in/alex-morgan-sample',
+        github: 'https://github.com/alex-morgan-sample'
       },
-      summary: 'Experienced product engineer focused on building reliable, user-centered digital products.',
+      summary: 'Staff Software Engineer & Cloud Architect with 8+ years of experience designing, scaling, and deploying high-availability distributed systems.',
       skills: [
-        { category: 'Frontend', skills: 'React, TypeScript, Next.js' },
-        { category: 'Backend', skills: 'Node.js, Express, PostgreSQL' }
+        { category: 'Languages & Runtimes', skills: 'Go, TypeScript, JavaScript (Node.js), Python, Java, SQL' },
+        { category: 'Cloud & Infrastructure', skills: 'AWS, GCP, Docker, Kubernetes, Terraform, Helm' }
       ],
       experience: [],
       projects: [],
       education: []
     };
-    const currentValue = resumeData ? JSON.stringify(resumeData, null, 2) : JSON.stringify(fallback, null, 2);
+
+    const currentValue = sampleTemplate ? JSON.stringify(sampleTemplate, null, 2) : JSON.stringify(fallback, null, 2);
     defaultDataJson.textContent = currentValue;
     defaultDataJson.style.height = '52vh';
     defaultDataJson.style.maxHeight = '55vh';
