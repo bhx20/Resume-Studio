@@ -114,12 +114,12 @@
       }
     },
     {
-      target: '#page-fit-badge',
+      target: '#zoom-controls-wrapper',
       fallbackTarget: '#btn-zoom-reset',
-      title: 'Page Budget & Zoom Control',
-      description: 'The page fit badge monitors your content height budget in real time to guarantee standard A4 delivery. Use zoom controls or Ctrl+Scroll to inspect layout details.',
+      title: 'Canvas Zoom Controls',
+      description: 'Use the zoom controls to inspect typography, margins, and fine details. Click the percentage to quickly reset back to 100% (or use Ctrl+Scroll and Ctrl+0).',
       placement: 'top',
-      pad: 8,
+      pad: 6,
       cardAlign: 'center',
       action: () => {
         if (typeof closeEditorPanel === 'function') closeEditorPanel();
