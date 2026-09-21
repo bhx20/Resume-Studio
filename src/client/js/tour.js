@@ -3,6 +3,13 @@
 
 (function () {
   const TOUR_STORAGE_KEY = 'resume_studio_tour_completed';
+  const WELCOME_STORAGE_KEY = 'resume_studio_welcome_seen';
+
+  const welcomeModalEl = document.getElementById('welcome-modal');
+  const welcomeBoxEl = document.getElementById('welcome-modal-box');
+  const welcomeTourBtn = document.getElementById('welcome-btn-tour');
+  const welcomeSkipBtn = document.getElementById('welcome-btn-skip');
+  const welcomeCloseBtn = document.getElementById('welcome-modal-close');
 
   const tourEl = document.getElementById('app-tour');
   const spotlightEl = document.getElementById('app-tour-spotlight');
@@ -459,19 +466,90 @@
     }, { passive: true });
   }
 
+  // --- Welcome Screen Logic for First-Time Users ---
+  function showWelcomeModal() {
+    if (!welcomeModalEl || !welcomeBoxEl) return;
+    welcomeModalEl.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      welcomeBoxEl.classList.remove('scale-95', 'opacity-0');
+      welcomeBoxEl.classList.add('scale-100', 'opacity-100');
+    });
+  }
+
+  function hideWelcomeModal(markSeen = true) {
+    if (!welcomeModalEl || !welcomeBoxEl) return;
+    welcomeBoxEl.classList.remove('scale-100', 'opacity-100');
+    welcomeBoxEl.classList.add('scale-95', 'opacity-0');
+    setTimeout(() => {
+      welcomeModalEl.classList.add('hidden');
+    }, 220);
+
+    if (markSeen) {
+      try {
+        localStorage.setItem(WELCOME_STORAGE_KEY, 'true');
+      } catch (e) {
+        // Ignore
+      }
+    }
+  }
+
+  // Welcome modal buttons
+  if (welcomeTourBtn) {
+    welcomeTourBtn.addEventListener('click', () => {
+      hideWelcomeModal(true);
+      setTimeout(() => {
+        openTour();
+      }, 240);
+    });
+  }
+
+  if (welcomeSkipBtn) {
+    welcomeSkipBtn.addEventListener('click', () => {
+      hideWelcomeModal(true);
+      try {
+        localStorage.setItem(TOUR_STORAGE_KEY, 'true');
+      } catch (e) {}
+    });
+  }
+
+  if (welcomeCloseBtn) {
+    welcomeCloseBtn.addEventListener('click', () => {
+      hideWelcomeModal(true);
+    });
+  }
+
+  // Close welcome modal on backdrop click
+  if (welcomeModalEl) {
+    welcomeModalEl.addEventListener('click', (e) => {
+      if (e.target === welcomeModalEl) {
+        hideWelcomeModal(true);
+      }
+    });
+  }
+
+  // Close welcome modal on Escape key if open
+  window.addEventListener('keydown', (e) => {
+    if (welcomeModalEl && !welcomeModalEl.classList.contains('hidden') && e.key === 'Escape') {
+      e.preventDefault();
+      hideWelcomeModal(true);
+    }
+  });
+
   // Expose globally
+  window.showWelcomeScreen = showWelcomeModal;
+  window.hideWelcomeScreen = hideWelcomeModal;
   window.startAppTour = openTour;
   window.closeAppTour = closeTour;
 
-  // Auto-start for first-time visitors
+  // Auto-prompt Welcome Screen for first-time visitors
   window.addEventListener('DOMContentLoaded', () => {
     try {
-      if (!localStorage.getItem(TOUR_STORAGE_KEY)) {
+      if (!localStorage.getItem(WELCOME_STORAGE_KEY)) {
         setTimeout(() => {
           if (!isTourActive && tourEl.classList.contains('hidden')) {
-            openTour();
+            showWelcomeModal();
           }
-        }, 850);
+        }, 400);
       }
     } catch (e) {
       // Ignore

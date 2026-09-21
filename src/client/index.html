@@ -578,12 +578,14 @@
     <div class="flex-1 bg-slate-200/70 flex flex-col overflow-hidden relative" data-purpose="print-simulation-wrapper">
       
       <!-- Floating Zoom Controls (Bottom Left Corner) -->
-      <div id="zoom-controls-wrapper" class="absolute bottom-5 left-5 z-20 bg-white/95 backdrop-blur border border-slate-300 rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-md no-print text-xs select-none">
+      <div class="absolute bottom-5 left-5 z-20 bg-white/95 backdrop-blur border border-slate-300 rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-md no-print text-xs select-none">
         <button id="btn-zoom-out" class="w-6 h-6 flex items-center justify-center hover:bg-slate-100 active:scale-95 rounded-full text-slate-600 font-bold transition" title="Zoom Out PDF (Ctrl + Scroll Down)">−</button>
         <button id="btn-zoom-reset" class="text-[11px] font-semibold text-slate-600 hover:text-blue-600 px-1.5 py-0.5 rounded hover:bg-slate-100 transition" title="Click to reset PDF zoom to 100% (Ctrl + 0)">
           <span id="zoom-text">100%</span>
         </button>
         <button id="btn-zoom-in" class="w-6 h-6 flex items-center justify-center hover:bg-slate-100 active:scale-95 rounded-full text-slate-600 font-bold transition" title="Zoom In PDF (Ctrl + Scroll Up)">+</button>
+        <span class="w-px h-3.5 bg-slate-200 mx-0.5"></span>
+        <span id="page-fit-badge" class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full inline-flex items-center gap-1" title="Real-time page fit budget">A4 Standard Fit ✅</span>
       </div>
 
       <!-- Simulated Document View (Both Pages Stacked & Centered) -->
@@ -888,6 +890,91 @@
   <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl text-xs font-medium hidden z-50 flex items-center gap-2 border border-slate-700">
     <i class="fa-solid fa-circle-check text-emerald-400"></i>
     <span id="toast-text">Saved to disk!</span>
+  </div>
+
+  <!-- Welcome Screen for First-Time Users -->
+  <div id="welcome-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-md z-[60] flex items-center justify-center p-4 hidden transition-opacity duration-300" role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title">
+    <div id="welcome-modal-box" class="bg-white rounded-3xl shadow-2xl border border-slate-200/90 max-w-lg w-full p-6 md:p-8 space-y-6 transform transition-all duration-300 scale-95 opacity-0 relative overflow-hidden">
+      
+      <!-- Decorative Accent Gradients -->
+      <div class="absolute -top-16 -right-16 w-36 h-36 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -bottom-16 -left-16 w-36 h-36 bg-violet-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <!-- Close Button (X) -->
+      <button id="welcome-modal-close" type="button" class="absolute top-4 right-4 w-8 h-8 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition flex items-center justify-center cursor-pointer" title="Skip to editor (Esc)" aria-label="Close welcome screen">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+
+      <!-- Header: Logo Icon, Title, Subtitle -->
+      <div class="space-y-2 text-center pt-1">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-lg shadow-blue-500/25 mb-1">
+          <i class="fa-solid fa-wand-magic-sparkles text-2xl"></i>
+        </div>
+        <h2 id="welcome-modal-title" class="text-2xl font-bold tracking-tight text-slate-900">Welcome to Resume Studio</h2>
+        <p class="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+          The offline-first, ATS-calibrated resume builder and document engine engineered for high-impact applications.
+        </p>
+      </div>
+
+      <!-- Key Capabilities Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+        <!-- Feature 1 -->
+        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 text-xs mt-0.5">
+            <i class="fa-solid fa-file-invoice"></i>
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-slate-800">A4 Standard Layout</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Multi-page layout calibrated for ATS parsers and zero awkward breaks.</p>
+          </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 text-xs mt-0.5">
+            <i class="fa-solid fa-arrows-up-down-left-right"></i>
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-slate-800">Drag & Edit</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Click any section to edit or grab handles to reorder dynamically.</p>
+          </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div class="w-8 h-8 rounded-lg bg-violet-100 text-violet-600 flex items-center justify-center shrink-0 text-xs mt-0.5">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-slate-800">100% Private</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Saves to local browser storage. No account or cloud sync required.</p>
+          </div>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center shrink-0 text-xs mt-0.5">
+            <i class="fa-solid fa-download"></i>
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-slate-800">PDF & Word Export</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">One-click downloads for headless Chrome PDF and genuine Word DOCX.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-2 pt-2 border-t border-slate-100">
+        <button id="welcome-btn-tour" type="button" class="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-2 cursor-pointer">
+          <i class="fa-solid fa-compass"></i>
+          <span>Take the 1-Minute Tour</span>
+        </button>
+        <button id="welcome-btn-skip" type="button" class="w-full py-2 px-4 rounded-xl text-slate-600 hover:text-slate-800 hover:bg-slate-100 text-xs font-medium transition flex items-center justify-center cursor-pointer">
+          <span>Jump Straight to Editor</span>
+        </button>
+      </div>
+
+    </div>
   </div>
 
   <!-- Guided App Tour -->
