@@ -1,8 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const { PORT, CLIENT_DIR, PUBLIC_DIR, MIME_TYPES } = require('./config');
-const { handleApiRoutes } = require('./routes/resume.routes');
+const { PORT, SRC_DIR, CLIENT_DIR, PUBLIC_DIR, MIME_TYPES } = require('./config');
 
 function createAppServer() {
   return http.createServer((req, res) => {
@@ -11,7 +10,7 @@ function createAppServer() {
 
     // Global CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
@@ -20,8 +19,39 @@ function createAppServer() {
       return;
     }
 
-    // 1. Dispatch API Routes
-    if (handleApiRoutes(req, res, pathname)) {
+    const rawUrl = req.url || '';
+    if (rawUrl.includes('..') || decodeURIComponent(rawUrl).includes('..')) {
+      res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('403 Forbidden: Access Denied');
+      return;
+    }
+
+    // 1. Serve Static Data Files (/data/* or /src/data/*)
+    if (pathname.startsWith('/data/') || pathname.startsWith('/src/data/')) {
+      const dataDir = path.join(SRC_DIR, 'data');
+      const filename = path.basename(pathname);
+
+      // Prefer local personal resume if resume-data.json is requested and personal copy exists
+      let targetPath = path.join(dataDir, filename);
+      if (filename === 'resume-data.json') {
+        const personalFile = path.join(dataDir, 'resume-data.personal.json');
+        const localFile = path.join(dataDir, 'resume-data.local.json');
+        if (fs.existsSync(personalFile)) {
+          targetPath = personalFile;
+        } else if (fs.existsSync(localFile)) {
+          targetPath = localFile;
+        }
+      }
+
+      const safeDataPath = path.resolve(targetPath);
+      if (!safeDataPath.startsWith(dataDir) || !fs.existsSync(safeDataPath)) {
+        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('404 Not Found');
+        return;
+      }
+
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      fs.createReadStream(safeDataPath).pipe(res);
       return;
     }
 
@@ -30,9 +60,7 @@ function createAppServer() {
     const relativeRequest = pathname === '/' ? '/index.html' : pathname;
     const safePath = path.resolve(staticRoot, '.' + relativeRequest);
 
-    // Security Hardening: Prevent directory traversal outside src/client
-    const rawUrl = req.url || '';
-    if (rawUrl.includes('..') || decodeURIComponent(rawUrl).includes('..') || !safePath.startsWith(staticRoot)) {
+    if (!safePath.startsWith(staticRoot)) {
       res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('403 Forbidden: Access Denied');
       return;
@@ -67,4 +95,3 @@ if (require.main === module) {
 }
 
 module.exports = { server, createAppServer };
-

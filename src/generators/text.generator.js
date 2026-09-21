@@ -3,7 +3,7 @@ const { normalizeResumeData, getSectionTitle, formatEducationLine, getEduCategor
 function generateMarkdown(raw) {
   const data = normalizeResumeData(raw);
   const p = data.personal || {};
-  let md = `# ${p.name || 'Sanket Kalathiya'}\n`;
+  let md = `# ${p.name || 'Candidate Name'}\n`;
   md += `**${p.title || ''}**  \n`;
   md += `${p.location || ''} | ${p.phone || ''} | ${p.email || ''}  \n`;
   if (p.linkedin) md += `[LinkedIn: ${p.linkedin.replace(/^https?:\/\//, '')}](${p.linkedin}) | `;
@@ -130,7 +130,7 @@ function generatePlainText(raw) {
   const data = normalizeResumeData(raw);
   const p = data.personal || {};
   let txt = `================================================================================\n`;
-  txt += `${p.name || 'Sanket Kalathiya'}\n`;
+  txt += `${p.name || 'Candidate Name'}\n`;
   txt += `${p.title || ''}\n`;
   txt += `${p.location || ''} | ${p.phone || ''} | ${p.email || ''}\n`;
   txt += `LinkedIn: ${p.linkedin || ''} | GitHub: ${p.github || ''}\n`;

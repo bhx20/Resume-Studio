@@ -13,7 +13,7 @@ function createDocx(raw) {
       spacing: { after: 40 },
       children: [
         new TextRun({
-          text: (p.name || 'Sanket Kalathiya').toUpperCase(),
+          text: (p.name || 'Candidate Name').toUpperCase(),
           bold: true,
           size: 36, // 18pt
           font: 'Arial',

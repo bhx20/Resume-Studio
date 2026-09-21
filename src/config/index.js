@@ -10,6 +10,8 @@ module.exports = {
   ROOT_DIR,
   SRC_DIR,
   DATA_FILE: path.join(SRC_DIR, 'data', 'resume-data.json'),
+  PERSONAL_DATA_FILE: path.join(SRC_DIR, 'data', 'resume-data.personal.json'),
+  LOCAL_DATA_FILE: path.join(SRC_DIR, 'data', 'resume-data.local.json'),
   DEFAULT_RESUME: defaultResume,
   CLIENT_DIR: path.join(SRC_DIR, 'client'),
   PUBLIC_DIR: path.join(SRC_DIR, 'client'),

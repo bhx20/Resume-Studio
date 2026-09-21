@@ -50,57 +50,23 @@ async function runTests() {
     assert(Array.isArray(data.experience), 'data must have experience array');
     assert(Array.isArray(data.projects), 'data must have projects array');
     assert(Array.isArray(data.education), 'data must have education array');
-    assert.strictEqual(data.personal.name, 'Sanket Kalathiya', 'personal.name must be Sanket Kalathiya');
-    assert(data.education.some(e => e.degree.includes('Bachelor of Commerce')), 'Education must include Bachelor of Commerce');
-    assert(data.education.some(e => e.degree.includes('Technical Training')), 'Education must include Technical Training');
-    assert(data.education.some(e => e.institution.includes('H.A. College of Commerce')), 'Education must include H.A. College of Commerce');
+    assert.strictEqual(data.personal.name, 'Alex Morgan', 'personal.name in sample template must be Alex Morgan');
+    assert(data.education.length >= 2, 'Education must include degree and certifications');
   });
 
   const defaultData = require('../src/config/defaultResume');
-  it('src/config/defaultResume exports valid fallback template with Sanket Kalathiya and education', () => {
-    assert.strictEqual(defaultData.personal.name, 'Sanket Kalathiya', 'default template must have name Sanket Kalathiya');
+  it('src/config/defaultResume exports valid fallback template with candidate data and education', () => {
+    assert(defaultData.personal && defaultData.personal.name, 'default template must have candidate name');
     assert(defaultData.education && defaultData.education.length >= 2, 'default template must have education credentials');
     assert(defaultData.experience && defaultData.experience.length > 0, 'default template must have experience');
   });
 
-  const { handleApiRoutes } = require('../src/routes/resume.routes');
-  it('handleApiRoutes persists a custom default resume JSON payload as the new default template', () => {
-    const dataPath = path.join(__dirname, '..', 'src', 'data', 'resume-data.json');
-    const original = fs.readFileSync(dataPath, 'utf8');
-    const originalData = JSON.parse(original);
-    const customDefault = {
-      ...originalData,
-      personal: {
-        ...originalData.personal,
-        name: 'Custom Default User',
-        title: 'Product Engineer'
-      }
-    };
-
-    const req = {
-      method: 'POST',
-      url: '/api/resume/default',
-      on(event, cb) {
-        if (event === 'data') cb(Buffer.from(JSON.stringify(customDefault)));
-        if (event === 'end') cb();
-      }
-    };
-
-    const res = {
-      setHeader() {},
-      writeHead() {},
-      end(body) {
-        const payload = JSON.parse(body);
-        assert.strictEqual(payload.success, true, 'Default template save should succeed');
-        assert.strictEqual(payload.defaultResume.personal.name, 'Custom Default User');
-      }
-    };
-
-    assert.strictEqual(handleApiRoutes(req, res, '/api/resume/default'), true, 'Custom default route should be handled');
-
-    const updated = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-    assert.strictEqual(updated.personal.name, 'Custom Default User', 'Default template file should update');
-    fs.writeFileSync(dataPath, original, 'utf8');
+  it('Personal data copy exists locally and is gitignored', () => {
+    const personalPath = path.join(__dirname, '..', 'src', 'data', 'resume-data.personal.json');
+    assert(fs.existsSync(personalPath), 'resume-data.personal.json must exist locally');
+    const gitignorePath = path.join(__dirname, '..', '.gitignore');
+    const gitignoreContent = fs.readFileSync(gitignorePath, 'utf8');
+    assert(gitignoreContent.includes('personal.json'), '.gitignore must exclude personal JSON files');
   });
 
   // 2. Helpers
@@ -271,9 +237,8 @@ async function runTests() {
     // Education verification on Page 2 with all 3 credentials
     const eduIdxHtml = html.indexOf('EDUCATION');
     assert(eduIdxHtml > page2Idx, 'EDUCATION must be on Page 2');
-    assert(html.includes('Bachelor of Commerce (B.Com)'), 'Must include Bachelor of Commerce');
-    assert(html.includes('Technical Training – Flutter &amp; Dart') || html.includes('Technical Training – Flutter & Dart'), 'Must include Technical Training – Flutter & Dart');
-    assert(html.includes('Advanced Cross-Platform Mobile Engineering Certification'), 'Must include Advanced Cross-Platform Mobile Engineering Certification');
+    assert(html.includes(resumeData.education[0].degree), 'Must include first education degree');
+    assert(resumeData.education.length >= 2, 'Must have at least 2 education entries');
   });
 
   it('sectionTitles allows fully dynamic titles for any section (e.g. TECHNICAL SKILLS MATRIX, EXECUTIVE PROFILE)', () => {
@@ -368,25 +333,18 @@ async function runTests() {
     assert(res.body.toString().includes('loadData'), 'app.js must contain client logic');
   });
 
-  await itAsync('GET /api/resume returns current JSON resume data', async () => {
-    const res = await fetchUrl('/api/resume');
+  await itAsync('GET /data/resume-data.json serves valid JSON resume model with HTTP 200', async () => {
+    const res = await fetchUrl('/data/resume-data.json');
     assert.strictEqual(res.statusCode, 200);
     const json = JSON.parse(res.body.toString());
-    assert.strictEqual(json.personal.name, resumeData.personal.name);
+    assert(json.personal, 'served JSON must contain personal');
+    assert(json.personal.name, 'served JSON must have personal.name');
+    assert(Array.isArray(json.skills), 'served JSON must have skills array');
   });
 
-  await itAsync('GET /api/download/json streams candidate JSON with attachment header', async () => {
-    const res = await fetchUrl('/api/download/json');
-    assert.strictEqual(res.statusCode, 200);
-    const disposition = res.headers['content-disposition'] || '';
-    assert(disposition.includes('_Resume.json'), 'Disposition must include dynamic filename');
-  });
-
-  await itAsync('GET /api/download/docx streams generated DOCX with attachment header', async () => {
-    const res = await fetchUrl('/api/download/docx');
-    assert.strictEqual(res.statusCode, 200);
-    assert(res.headers['content-disposition'].includes('_Resume.docx'));
-    assert(res.body.length > 5000);
+  await itAsync('Zero-API Architecture: /api endpoints are not exposed', async () => {
+    const res = await fetchUrl('/api/resume');
+    assert(res.statusCode === 404 || res.statusCode === 403, 'API routes must not exist');
   });
 
   await itAsync('Security: Directory traversal outside src/client is blocked with HTTP 403', async () => {

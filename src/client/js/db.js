@@ -55,7 +55,7 @@ const LocalResumeDatabase = {
 };
 window.LocalResumeDatabase = LocalResumeDatabase;
 
-// Asynchronously loads default data directly from src/data/resume-data.json (Single Source of Truth)
+// Asynchronously loads default data directly from static data files
 async function loadDefaultSourceData() {
   const localDefault = LocalResumeDatabase.getDefault();
   if (localDefault) {
@@ -64,48 +64,24 @@ async function loadDefaultSourceData() {
     return normalizeResumeData(localDefault);
   }
 
-  try {
-    const res = await fetch('/api/resume');
-    if (res.ok) {
-      const parsed = await res.json();
-      DEFAULT_RESUME_DATA = parsed;
-      window.DEFAULT_RESUME_DATA = parsed;
-      return normalizeResumeData(parsed);
-    }
-  } catch (e) {
-    console.warn('Could not fetch from /api/resume, trying relative path:', e);
-  }
+  const candidatePaths = [
+    '/data/resume-data.personal.json',
+    'data/resume-data.personal.json',
+    '/data/resume-data.json',
+    'data/resume-data.json',
+    '../src/data/resume-data.json'
+  ];
 
-  try {
-    const res = await fetch('/data/resume-data.json');
-    if (res.ok) {
-      const parsed = await res.json();
-      DEFAULT_RESUME_DATA = parsed;
-      window.DEFAULT_RESUME_DATA = parsed;
-      return normalizeResumeData(parsed);
-    }
-  } catch (_) {}
-
-  try {
-    const res = await fetch('data/resume-data.json');
-    if (res.ok) {
-      const parsed = await res.json();
-      DEFAULT_RESUME_DATA = parsed;
-      window.DEFAULT_RESUME_DATA = parsed;
-      return normalizeResumeData(parsed);
-    }
-  } catch (_) {}
-
-  try {
-    const res = await fetch('../src/data/resume-data.json');
-    if (res.ok) {
-      const parsed = await res.json();
-      DEFAULT_RESUME_DATA = parsed;
-      window.DEFAULT_RESUME_DATA = parsed;
-      return normalizeResumeData(parsed);
-    }
-  } catch (e) {
-    console.error('Failed to load resume data from static sources:', e);
+  for (const p of candidatePaths) {
+    try {
+      const res = await fetch(p);
+      if (res.ok) {
+        const parsed = await res.json();
+        DEFAULT_RESUME_DATA = parsed;
+        window.DEFAULT_RESUME_DATA = parsed;
+        return normalizeResumeData(parsed);
+      }
+    } catch (_) {}
   }
 
   return DEFAULT_RESUME_DATA ? normalizeResumeData(DEFAULT_RESUME_DATA) : {};
@@ -148,11 +124,6 @@ async function loadData() {
         edu.category = getEduCategory(edu);
       }
     });
-  }
-  if (resumeData && resumeData.personal) {
-    if (!resumeData.personal.name || resumeData.personal.name === 'SANKET KALATHIYA') {
-      resumeData.personal.name = 'Sanket Kalathiya';
-    }
   }
   if (resumeData && resumeData.sectionTitles) {
     if (resumeData.sectionTitles.education === 'EDUCATION & CREDENTIALS') {

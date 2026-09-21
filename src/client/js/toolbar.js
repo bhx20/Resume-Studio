@@ -56,7 +56,7 @@ function stopAutoScroll() {
 
 function buildMarkdown(data) {
   const p = data.personal || {};
-  let md = `# ${p.name || 'Sanket Kalathiya'}\n`;
+  let md = `# ${p.name || 'Resume Candidate'}\n`;
   md += `**${p.title || ''}**  \n`;
   md += `${p.location || ''} | ${p.phone || ''} | ${p.email || ''}  \n`;
   if (p.linkedin) md += `[LinkedIn: ${p.linkedin.replace(/^https?:\/\//, '')}](${p.linkedin}) | `;
@@ -175,7 +175,7 @@ function buildMarkdown(data) {
 function buildPlainText(data) {
   const p = data.personal || {};
   let txt = `================================================================================\n`;
-  txt += `${p.name || 'Sanket Kalathiya'}\n`;
+  txt += `${p.name || 'Resume Candidate'}\n`;
   txt += `${p.title || ''}\n`;
   txt += `${p.location || ''} | ${p.phone || ''} | ${p.email || ''}\n`;
   txt += `LinkedIn: ${p.linkedin || ''} | GitHub: ${p.github || ''}\n`;
@@ -415,7 +415,7 @@ function downloadWordHtml(data) {
     </head>
     <body>
       <div class="Section1">
-        <h1>${escapeHtml(p.name || 'Sanket Kalathiya')}</h1>
+        <h1>${escapeHtml(p.name || 'Resume Candidate')}</h1>
         <div class="title">${escapeHtml(p.title || '')}</div>
         <div class="contact">${escapeHtml([p.location, p.phone, p.email, p.linkedin, p.github].filter(Boolean).join('  •  '))}</div>
         ${sectionsHtml}
@@ -699,36 +699,13 @@ function setupToolbarActions() {
     };
   }
 
-  // Download DOC (True OpenXML .docx from backend API with offline .doc fallback)
+  // Download DOC (Client-side Word export)
   const btnDownloadDoc = document.getElementById('btn-download-doc');
   if (btnDownloadDoc) {
-    btnDownloadDoc.onclick = async () => {
+    btnDownloadDoc.onclick = () => {
       syncActiveFormFields();
       LocalResumeDatabase.save(resumeData);
-      showToast('Generating Word Document (.docx)...');
-      try {
-        const res = await fetch('/api/download/docx', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(resumeData)
-        });
-        if (res.ok) {
-          const blob = await res.blob();
-          const fileName = getCandidateFilename(resumeData, 'docx');
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = fileName;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          showToast(`Downloaded ${fileName}!`);
-          return;
-        }
-      } catch (e) {
-        console.warn('Backend DOCX generator offline, falling back to client DOC export:', e);
-      }
+      showToast('Generating Word Document (.doc)...');
       downloadWordHtml(resumeData);
     };
   }

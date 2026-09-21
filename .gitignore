@@ -47,3 +47,12 @@ Thumbs.db
 *.pdf
 *.docx
 
+# Personal & Local Resume Data (Strictly Uncommitted)
+src/data/*.personal.json
+src/data/*.local.json
+src/data/my-resume*.json
+*.personal.json
+*.local.json
+my-resume*.json
+
+

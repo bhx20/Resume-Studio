@@ -95,8 +95,8 @@ function generateHtml(raw) {
   // Estimate block heights for A4 pagination (usable height ~1018px)
   const headerHtml = `
     <header>
-      <h1>${escapeHtml(p.name || 'Sanket Kalathiya')}</h1>
-      <div class="subtitle">${escapeHtml(p.title || 'Lead Flutter Developer')}</div>
+      <h1>${escapeHtml(p.name || 'Candidate Name')}</h1>
+      <div class="subtitle">${escapeHtml(p.title || 'Software Engineer')}</div>
       <div class="contact-line">${escapeHtml(p.location || '')} | ${escapeHtml(p.phone || '')} | <a href="mailto:${escapeHtml(p.email || '')}">${escapeHtml(p.email || '')}</a></div>
       <div class="contact-line">LinkedIn: <a href="${escapeHtml(p.linkedin || '')}">${escapeHtml(p.linkedin || '')}</a> | GitHub: <a href="${escapeHtml(p.github || '')}">${escapeHtml(p.github || '')}</a></div>
     </header>
@@ -161,9 +161,9 @@ function generateHtml(raw) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(p.name || 'Sanket Kalathiya')} - ${escapeHtml(p.title || 'Lead Flutter Developer')} - Resume</title>
-  <meta name="author" content="${escapeHtml(p.name || 'Sanket Kalathiya')}">
-  <meta name="description" content="${escapeHtml((p.name || 'Sanket Kalathiya') + ', ' + (p.title || 'Lead Flutter Developer') + ' resume')}">
+  <title>${escapeHtml(p.name || 'Candidate Name')} - ${escapeHtml(p.title || 'Software Engineer')} - Resume</title>
+  <meta name="author" content="${escapeHtml(p.name || 'Candidate Name')}">
+  <meta name="description" content="${escapeHtml((p.name || 'Candidate Name') + ', ' + (p.title || 'Software Engineer') + ' resume')}">
   <style>
     * {
       box-sizing: border-box;

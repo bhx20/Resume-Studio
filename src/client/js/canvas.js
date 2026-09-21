@@ -242,8 +242,8 @@ function renderPages() {
   const headerHtml = `
     <header class="resume-section" data-section-id="personal" title="Click to edit personal information">
       <span class="section-edit-badge"><i class="fa-solid fa-pen text-[8px] mr-1"></i>Edit</span>
-      <h1>${escapeHtml(p.name || 'Sanket Kalathiya')}</h1>
-      <div class="subtitle">${escapeHtml(p.title || 'Lead Flutter Developer & Mobile Architect | Multi-Platform (Mobile & Web)')}</div>
+      <h1>${escapeHtml(p.name || 'Resume Candidate')}</h1>
+      <div class="subtitle">${escapeHtml(p.title || 'Software Engineer')}</div>
       <div class="contact-line">
         ${escapeHtml(p.location || '')} | ${escapeHtml(p.phone || '')} | <a href="mailto:${escapeHtml(p.email || '')}">${escapeHtml(p.email || '')}</a>
       </div>

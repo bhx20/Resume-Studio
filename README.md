@@ -62,7 +62,7 @@ Double-click [`start.bat`](start.bat) in the project root to start the server an
 | :--- | :--- |
 | `npm start` | Starts the local HTTP application server on port `3000`. |
 | `npm run dev` | Runs development server. |
-| `npm test` | Executes the integration test suite (validates data models, HTML escaping, DOCX buffers, and API routes). |
+| `npm test` | Executes the integration test suite (validates data models, HTML escaping, DOCX buffers, and static server). |
 | `npm run build` | Compiles client assets and generates `dist/` with Netlify `_redirects` for production deployment. |
 
 ---
@@ -98,14 +98,9 @@ Resume-Studio/
 │   │   ├── html.generator.js    # Calibrated ATS HTML generator (XSS hardened)
 │   │   ├── pdf.generator.js     # Cross-platform headless browser vector PDF generator
 │   │   └── text.generator.js    # Markdown & plain text generators
-│   ├── routes/
-│   │   └── resume.routes.js     # HTTP API router (/api/resume, /api/download/*)
-│   ├── server.js                # Native Node.js HTTP application server
+│   ├── server.js                # Native Node.js static HTTP server
 │   └── utils/
 │       └── helpers.js           # Shared ATS formatting & tolerant normalization
-├── netlify/
-│   └── functions/
-│       └── api.js               # Serverless API function for Netlify hosting
 ├── scripts/
 │   └── build.js                 # Production build script for static hosting
 ├── tests/
