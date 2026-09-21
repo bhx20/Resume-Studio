@@ -26,22 +26,16 @@ function createAppServer() {
       return;
     }
 
-    // 1. Serve Static Data Files (/data/* or /src/data/*)
-    if (pathname.startsWith('/data/') || pathname.startsWith('/src/data/')) {
-      const dataDir = path.join(SRC_DIR, 'data');
-      const filename = path.basename(pathname);
-
-      const targetPath = path.join(dataDir, filename);
-
-      const safeDataPath = path.resolve(targetPath);
-      if (!safeDataPath.startsWith(dataDir) || !fs.existsSync(safeDataPath)) {
+    // 1. Serve Master Resume Data (Strictly src/data/resume-data.json)
+    if (pathname === '/data/resume-data.json' || pathname === '/src/data/resume-data.json' || pathname.endsWith('resume-data.json')) {
+      const dataFile = path.join(SRC_DIR, 'data', 'resume-data.json');
+      if (!fs.existsSync(dataFile)) {
         res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
         res.end('404 Not Found');
         return;
       }
-
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-      fs.createReadStream(safeDataPath).pipe(res);
+      fs.createReadStream(dataFile).pipe(res);
       return;
     }
 
