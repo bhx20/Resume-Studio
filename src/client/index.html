@@ -577,15 +577,13 @@
     <!-- BEGIN: Center Canvas (Resume stays in center of screen) -->
     <div class="flex-1 bg-slate-200/70 flex flex-col overflow-hidden relative" data-purpose="print-simulation-wrapper">
       
-      <!-- Floating Zoom Controls (Bottom Left Corner) -->
-      <div class="absolute bottom-5 left-5 z-20 bg-white/95 backdrop-blur border border-slate-300 rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-md no-print text-xs select-none">
+      <!-- Floating Zoom Controls (Bottom Left Corner: Clean Zoom Only) -->
+      <div id="zoom-controls-wrapper" class="absolute bottom-5 left-5 z-20 bg-white/95 backdrop-blur border border-slate-300 rounded-full px-2 py-1 flex items-center gap-1 shadow-md no-print text-xs select-none">
         <button id="btn-zoom-out" class="w-6 h-6 flex items-center justify-center hover:bg-slate-100 active:scale-95 rounded-full text-slate-600 font-bold transition" title="Zoom Out PDF (Ctrl + Scroll Down)">−</button>
         <button id="btn-zoom-reset" class="text-[11px] font-semibold text-slate-600 hover:text-blue-600 px-1.5 py-0.5 rounded hover:bg-slate-100 transition" title="Click to reset PDF zoom to 100% (Ctrl + 0)">
           <span id="zoom-text">100%</span>
         </button>
         <button id="btn-zoom-in" class="w-6 h-6 flex items-center justify-center hover:bg-slate-100 active:scale-95 rounded-full text-slate-600 font-bold transition" title="Zoom In PDF (Ctrl + Scroll Up)">+</button>
-        <span class="w-px h-3.5 bg-slate-200 mx-0.5"></span>
-        <span id="page-fit-badge" class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full inline-flex items-center gap-1" title="Real-time page fit budget">A4 Standard Fit ✅</span>
       </div>
 
       <!-- Simulated Document View (Both Pages Stacked & Centered) -->

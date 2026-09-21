@@ -561,8 +561,11 @@ function setupSectionInteractions() {
 }
 window.setupSectionInteractions = setupSectionInteractions;
 
-// Calculate Page Height & Fit for all dynamic pages
+// Calculate Page Height & Fit (no-op if badge element is not in DOM)
 function updatePageFitMeter() {
+  const badge = document.getElementById('page-fit-badge');
+  if (!badge) return;
+
   requestAnimationFrame(() => {
     const pages = document.querySelectorAll('.resume-document-page');
     if (!pages.length) return;
@@ -579,13 +582,10 @@ function updatePageFitMeter() {
       if (pct > 102) allFit = false;
     });
 
-    const badge = document.getElementById('page-fit-badge');
-    if (badge) {
-      if (allFit) {
-        badge.textContent = `${pcts.join(' | ')} (A4 Standard Fit ✅)`;
-      } else {
-        badge.textContent = `${pcts.join(' | ')} (Adjusting budget...)`;
-      }
+    if (allFit) {
+      badge.textContent = `${pcts.join(' | ')} (A4 Standard Fit ✅)`;
+    } else {
+      badge.textContent = `${pcts.join(' | ')} (Adjusting budget...)`;
     }
   });
 }
