@@ -69,14 +69,24 @@
       title: 'Drag-and-Drop Reordering',
       description: 'Grab any section by its DRAG handle to reorder sections effortlessly. The document flow and pagination instantly recalibrate across pages.',
       placement: 'bottom',
-      pad: 8,
+      pad: 6,
       cardAlign: 'center',
       action: () => {
         if (typeof closeEditorPanel === 'function') closeEditorPanel();
-        const handle = document.querySelector('.resume-section[data-section-id="summary"] .section-drag-handle') || document.querySelector('.section-drag-handle');
+        document.querySelectorAll('.tour-active-drag').forEach(el => el.classList.remove('tour-active-drag'));
+        document.querySelectorAll('.tour-drag-visible').forEach(el => el.classList.remove('tour-drag-visible'));
+
+        const section = document.querySelector('.resume-section[data-section-id="summary"]') || document.querySelector('.resume-section');
+        const handle = section ? section.querySelector('.section-drag-handle') : document.querySelector('.section-drag-handle');
+        if (section) section.classList.add('tour-active-drag');
         if (handle) {
+          handle.classList.add('tour-drag-visible');
           handle.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+      },
+      cleanup: () => {
+        document.querySelectorAll('.tour-active-drag').forEach(el => el.classList.remove('tour-active-drag'));
+        document.querySelectorAll('.tour-drag-visible').forEach(el => el.classList.remove('tour-drag-visible'));
       }
     },
     {
@@ -298,6 +308,12 @@
 
   function goToStep(index) {
     if (index < 0 || index >= steps.length) return;
+
+    // Run cleanup for previous step if defined
+    if (steps[currentStepIndex] && typeof steps[currentStepIndex].cleanup === 'function') {
+      steps[currentStepIndex].cleanup();
+    }
+
     currentStepIndex = index;
     const step = steps[currentStepIndex];
 
@@ -358,6 +374,8 @@
     isTourActive = false;
     activeTargetElement = null;
     document.body.classList.remove('tour-active');
+    document.querySelectorAll('.tour-active-drag').forEach(el => el.classList.remove('tour-active-drag'));
+    document.querySelectorAll('.tour-drag-visible').forEach(el => el.classList.remove('tour-drag-visible'));
     tourEl.classList.add('hidden');
     tourEl.setAttribute('aria-hidden', 'true');
     if (spotlightEl) spotlightEl.style.display = 'none';
