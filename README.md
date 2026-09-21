@@ -1,15 +1,6 @@
-# Resume Studio 📄✨
+# Resume Studio 📄
 
-### ATS-Calibrated Executive Resume Studio & Career Document Engine
 
-[![Live Application](https://img.shields.io/badge/🚀_Launch_Live_App-resume--studio--editor.netlify.app-00C7B7?style=for-the-badge)](https://resume-studio-editor.netlify.app/)
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
-[![ATS Gold Standard](https://img.shields.io/badge/ATS%20Calibration-2026%20MNC%20Standard-success?style=for-the-badge)](#-why-resume-studio)
-[![100% Private](https://img.shields.io/badge/Privacy-100%25%20Device--Local%20%7C%20Zero%20API-orange?style=for-the-badge)](#-100-device-local-privacy)
-
----
-
-## ️ Studio Showcase
 
 <div align="center">
   <img src="src/client/assets/1.png" alt="Resume Studio Welcome Screen & Studio Experience" width="100%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12); margin-bottom: 24px;" />
@@ -19,17 +10,15 @@
 <br/>
 
 <div align="center">
-  <img src="src/client/assets/2.png" alt="Resume Studio Dual-Page A4 Canvas & Real-Time Editor" width="100%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12); margin-bottom: 20px;" />
+  <img src="src/client/assets/2.png" alt="Resume Studio Dual-Page A4 Canvas & Real-Time Editor" width="100%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);" />
+
   <p><em>Interactive Dual-Page A4 Studio Canvas — Precision typography, dynamic section editing drawer, real-time page budget meter, and instant export tools.</em></p>
 </div>
-
-<div align="center" style="margin-top: 28px; margin-bottom: 16px;">
-  <a href="https://resume-studio-editor.netlify.app/">
-    <img src="https://img.shields.io/badge/🚀_Launch_Resume_Studio-Click_Here_to_Start-00C7B7?style=for-the-badge&labelColor=0f172a" alt="Launch Resume Studio" height="44" />
-  </a>
-  <p style="margin-top: 10px; font-size: 14px;"><strong><a href="https://resume-studio-editor.netlify.app/">👉 https://resume-studio-editor.netlify.app/</a></strong></p>
-  <p><em>Zero account registration, zero cloud storage, zero tracking. Your data never leaves your device.</em></p>
+<div align="center">
+  <p>Crafted with pride for software engineers, tech professionals, and creators worldwide.</p>
+  <p><strong><a href="https://resume-studio-editor.netlify.app/">Launch Resume Studio Live →</a></strong></p>
 </div>
+
 
 ---
 
