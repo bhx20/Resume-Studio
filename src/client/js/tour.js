@@ -518,6 +518,14 @@
     });
   }
 
+  // App logo click opens the full-screen welcome screen
+  const appLogoTrigger = document.getElementById('app-logo-trigger');
+  if (appLogoTrigger) {
+    appLogoTrigger.addEventListener('click', () => {
+      showWelcomeModal();
+    });
+  }
+
   // Close welcome modal on backdrop click
   if (welcomeModalEl) {
     welcomeModalEl.addEventListener('click', (e) => {
