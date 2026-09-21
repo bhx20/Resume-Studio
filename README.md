@@ -9,16 +9,6 @@
 
 ---
 
-## 🌐 Live Web Experience
-
-Open, edit, and export your resume in under 5 minutes directly in your browser:
-
-### 👉 **[https://resume-studio-editor.netlify.app/](https://resume-studio-editor.netlify.app/)**
-
-*Zero account registration, zero cloud storage, zero tracking. Your data never leaves your device.*
-
----
-
 ## 🖼️ Studio Showcase
 
 <div align="center">
@@ -29,8 +19,16 @@ Open, edit, and export your resume in under 5 minutes directly in your browser:
 <br/>
 
 <div align="center">
-  <img src="src/client/assets/2.png" alt="Resume Studio Dual-Page A4 Canvas & Real-Time Editor" width="100%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);" />
+  <img src="src/client/assets/2.png" alt="Resume Studio Dual-Page A4 Canvas & Real-Time Editor" width="100%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12); margin-bottom: 20px;" />
   <p><em>Interactive Dual-Page A4 Studio Canvas — Precision typography, dynamic section editing drawer, real-time page budget meter, and instant export tools.</em></p>
+</div>
+
+<div align="center" style="margin-top: 28px; margin-bottom: 16px;">
+  <a href="https://resume-studio-editor.netlify.app/">
+    <img src="https://img.shields.io/badge/🚀_Launch_Resume_Studio-Click_Here_to_Start-00C7B7?style=for-the-badge&labelColor=0f172a" alt="Launch Resume Studio" height="44" />
+  </a>
+  <p style="margin-top: 10px; font-size: 14px;"><strong><a href="https://resume-studio-editor.netlify.app/">👉 https://resume-studio-editor.netlify.app/</a></strong></p>
+  <p><em>Zero account registration, zero cloud storage, zero tracking. Your data never leaves your device.</em></p>
 </div>
 
 ---
