@@ -894,29 +894,29 @@
 
   <!-- Welcome Screen for First-Time Users (Full Screen Studio Experience) -->
   <div id="welcome-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-2xl z-[80] overflow-y-auto flex flex-col justify-between hidden transition-opacity duration-300" role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title">
-    <div id="welcome-modal-box" class="w-full min-h-screen flex flex-col justify-between bg-gradient-to-b from-slate-50 via-white to-slate-100/90 transform transition-all duration-300 scale-95 opacity-0 relative overflow-hidden">
+    <div id="welcome-modal-box" class="w-full min-h-screen flex flex-col justify-between bg-gradient-to-b from-slate-50 via-white to-slate-100/90 transform transition-all duration-300 scale-95 opacity-0 relative">
       
       <!-- Ambient Decorative Gradients -->
       <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
       <div class="absolute top-1/3 -right-32 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl pointer-events-none"></div>
       <div class="absolute -bottom-32 left-1/3 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-      <!-- Centered Content Wrapper -->
-      <div class="max-w-7xl w-full mx-auto flex-1 flex flex-col justify-between p-6 sm:p-8 md:p-10 lg:p-12 z-10">
+      <!-- Centered Content Wrapper: Calibrated to fit 100% within viewport -->
+      <div class="max-w-7xl w-full mx-auto flex-1 flex flex-col justify-between px-5 py-4 sm:px-8 sm:py-5 lg:px-12 lg:py-6 z-10">
 
         <!-- Top Navigation / Header Bar -->
-        <header class="flex items-center justify-between pb-6 border-b border-slate-200/80 gap-4">
+        <header class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-200/80 gap-4 shrink-0">
           <!-- System Logo + ATS Version Badge -->
-          <div class="flex items-center gap-3.5">
-            <img src="assets/logo.png" alt="Resume Studio" class="h-9 sm:h-10 w-auto object-contain drop-shadow-xs" />
-            <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/70 shadow-2xs">
-              <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+          <div class="flex items-center gap-3">
+            <img src="assets/logo.png" alt="Resume Studio" class="h-8 sm:h-9 w-auto object-contain drop-shadow-xs" />
+            <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200/70 shadow-2xs">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
               v2.4 ATS Calibrated
             </span>
           </div>
 
           <!-- Skip / Close Button -->
-          <button id="welcome-modal-close" type="button" class="group inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 transition shadow-xs cursor-pointer" title="Skip to editor (Esc)" aria-label="Close welcome screen">
+          <button id="welcome-modal-close" type="button" class="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 transition shadow-2xs cursor-pointer" title="Skip to editor (Esc)" aria-label="Close welcome screen">
             <span>Skip to Editor</span>
             <kbd class="hidden md:inline-block px-1.5 py-0.5 text-[10px] font-mono font-medium text-slate-400 bg-slate-100 border border-slate-200 rounded group-hover:bg-white group-hover:text-slate-600">Esc</kbd>
             <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-slate-700 group-hover:translate-x-0.5 transition-transform"></i>
@@ -924,108 +924,116 @@
         </header>
 
         <!-- Hero Section -->
-        <main class="py-8 sm:py-12 md:py-16 text-center max-w-4xl mx-auto space-y-6">
+        <main class="py-3 sm:py-5 md:py-6 text-center max-w-3xl mx-auto space-y-3 sm:space-y-4 my-auto shrink-0">
           
           <!-- Category Pill -->
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 text-blue-700 text-xs sm:text-sm font-semibold shadow-xs">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 text-blue-700 text-xs font-semibold shadow-2xs">
             <i class="fa-solid fa-wand-magic-sparkles text-blue-600"></i>
             <span>Offline-First ATS Resume Studio</span>
           </div>
 
           <!-- Main Title -->
-          <h1 id="welcome-modal-title" class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.12]">
+          <h1 id="welcome-modal-title" class="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-slate-900 tracking-tight leading-[1.14]">
             Craft your executive resume with <span class="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent">pixel-perfect ATS standards</span>.
           </h1>
 
           <!-- Subtitle -->
-          <p class="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          <p class="text-xs sm:text-sm md:text-base text-slate-600 max-w-xl mx-auto leading-relaxed">
             The professional document engineering suite engineered for high-impact careers. Live multi-page A4 calibration, dynamic drag-and-drop sections, 100% private offline storage, and production-ready exports.
           </p>
 
           <!-- Primary & Secondary Action Dock -->
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2 sm:pt-4">
-            <button id="welcome-btn-tour" type="button" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm sm:text-base font-bold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/35 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 cursor-pointer">
-              <i class="fa-solid fa-compass text-lg"></i>
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1 sm:pt-2">
+            <button id="welcome-btn-tour" type="button" class="w-full sm:w-auto px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/35 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2.5 cursor-pointer">
+              <i class="fa-solid fa-compass text-base"></i>
               <span>Take the 1-Minute Interactive Tour</span>
             </button>
-            <button id="welcome-btn-skip" type="button" class="w-full sm:w-auto px-6 py-3.5 rounded-xl text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-sm sm:text-base font-semibold transition shadow-xs flex items-center justify-center gap-2 cursor-pointer">
+            <button id="welcome-btn-skip" type="button" class="w-full sm:w-auto px-5 py-2.5 sm:py-3 rounded-xl text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-xs sm:text-sm font-semibold transition shadow-2xs flex items-center justify-center gap-2 cursor-pointer">
               <span>Jump Straight to Editor</span>
               <i class="fa-solid fa-arrow-right text-xs text-slate-400"></i>
             </button>
           </div>
         </main>
 
-        <!-- 4-Column Feature Pillars Grid -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 pt-6 border-t border-slate-200/70" aria-label="Key features">
+        <!-- 4-Column Feature Pillars Grid (Compact & Balanced) -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-3.5 pt-3 sm:pt-4 border-t border-slate-200/70 shrink-0" aria-label="Key features">
           
           <!-- Pillar 1 -->
-          <div class="p-5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs hover:border-blue-300 hover:shadow-md transition-all flex flex-col justify-between group">
-            <div class="space-y-2.5">
-              <div class="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 text-base group-hover:scale-105 transition-transform">
-                <i class="fa-solid fa-file-invoice"></i>
+          <div class="p-3.5 sm:p-4 rounded-xl bg-white/90 border border-slate-200/90 shadow-2xs hover:border-blue-300 hover:shadow-sm transition-all flex flex-col justify-between group">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-xs text-xs shrink-0 group-hover:scale-105 transition-transform">
+                  <i class="fa-solid fa-file-invoice"></i>
+                </div>
+                <h3 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">A4 Standard Layout</h3>
               </div>
-              <h3 class="text-sm sm:text-base font-bold text-slate-900">A4 Standard Layout</h3>
-              <p class="text-xs text-slate-500 leading-relaxed">
-                Multi-page layout calibrated to strict 210mm × 297mm dimensions, preventing awkward page-break splits.
+              <p class="text-[11px] text-slate-500 leading-relaxed">
+                Multi-page layout calibrated to strict 210mm × 297mm dimensions, preventing awkward page splits.
               </p>
             </div>
-            <div class="pt-3.5">
-              <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
-                <i class="fa-solid fa-check text-[10px]"></i> Zero Overflow Splits
+            <div class="pt-2">
+              <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                <i class="fa-solid fa-check text-[8px]"></i> Zero Overflow Splits
               </span>
             </div>
           </div>
 
           <!-- Pillar 2 -->
-          <div class="p-5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs hover:border-emerald-300 hover:shadow-md transition-all flex flex-col justify-between group">
-            <div class="space-y-2.5">
-              <div class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 text-base group-hover:scale-105 transition-transform">
-                <i class="fa-solid fa-arrows-up-down-left-right"></i>
+          <div class="p-3.5 sm:p-4 rounded-xl bg-white/90 border border-slate-200/90 shadow-2xs hover:border-emerald-300 hover:shadow-sm transition-all flex flex-col justify-between group">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-xs text-xs shrink-0 group-hover:scale-105 transition-transform">
+                  <i class="fa-solid fa-arrows-up-down-left-right"></i>
+                </div>
+                <h3 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">Drag &amp; Instant Edit</h3>
               </div>
-              <h3 class="text-sm sm:text-base font-bold text-slate-900">Drag &amp; Instant Edit</h3>
-              <p class="text-xs text-slate-500 leading-relaxed">
-                Reorder sections dynamically with tactile drag handles. Click any block to edit with real-time reactive sync.
+              <p class="text-[11px] text-slate-500 leading-relaxed">
+                Reorder sections dynamically with tactile drag handles. Click any block to edit with real-time sync.
               </p>
             </div>
-            <div class="pt-3.5">
-              <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">
-                <i class="fa-solid fa-check text-[10px]"></i> Live Reactive Sync
+            <div class="pt-2">
+              <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
+                <i class="fa-solid fa-check text-[8px]"></i> Live Reactive Sync
               </span>
             </div>
           </div>
 
           <!-- Pillar 3 -->
-          <div class="p-5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs hover:border-violet-300 hover:shadow-md transition-all flex flex-col justify-between group">
-            <div class="space-y-2.5">
-              <div class="w-11 h-11 rounded-xl bg-violet-600 text-white flex items-center justify-center shadow-md shadow-violet-500/20 text-base group-hover:scale-105 transition-transform">
-                <i class="fa-solid fa-shield-halved"></i>
+          <div class="p-3.5 sm:p-4 rounded-xl bg-white/90 border border-slate-200/90 shadow-2xs hover:border-violet-300 hover:shadow-sm transition-all flex flex-col justify-between group">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-violet-600 text-white flex items-center justify-center shadow-xs text-xs shrink-0 group-hover:scale-105 transition-transform">
+                  <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">100% Private &amp; Offline</h3>
               </div>
-              <h3 class="text-sm sm:text-base font-bold text-slate-900">100% Private &amp; Offline</h3>
-              <p class="text-xs text-slate-500 leading-relaxed">
-                Your data never leaves your device. Stored locally in IndexedDB with zero cloud telemetry or account lock-in.
+              <p class="text-[11px] text-slate-500 leading-relaxed">
+                Data never leaves your device. Stored locally in IndexedDB with zero cloud telemetry or account lock-in.
               </p>
             </div>
-            <div class="pt-3.5">
-              <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-violet-700 bg-violet-50 px-2.5 py-1 rounded-lg border border-violet-100">
-                <i class="fa-solid fa-check text-[10px]"></i> Local-First Privacy
+            <div class="pt-2">
+              <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-violet-700 bg-violet-50 px-2 py-0.5 rounded border border-violet-100">
+                <i class="fa-solid fa-check text-[8px]"></i> Local-First Privacy
               </span>
             </div>
           </div>
 
           <!-- Pillar 4 -->
-          <div class="p-5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-xs hover:border-rose-300 hover:shadow-md transition-all flex flex-col justify-between group">
-            <div class="space-y-2.5">
-              <div class="w-11 h-11 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-md shadow-rose-500/20 text-base group-hover:scale-105 transition-transform">
-                <i class="fa-solid fa-file-arrow-down"></i>
+          <div class="p-3.5 sm:p-4 rounded-xl bg-white/90 border border-slate-200/90 shadow-2xs hover:border-rose-300 hover:shadow-sm transition-all flex flex-col justify-between group">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center shadow-xs text-xs shrink-0 group-hover:scale-105 transition-transform">
+                  <i class="fa-solid fa-file-arrow-down"></i>
+                </div>
+                <h3 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">Dual PDF &amp; Word Export</h3>
               </div>
-              <h3 class="text-sm sm:text-base font-bold text-slate-900">Dual PDF &amp; Word Export</h3>
-              <p class="text-xs text-slate-500 leading-relaxed">
-                One-click downloads for headless Chrome PDF printouts and genuine structured Microsoft Word (.docx) formats.
+              <p class="text-[11px] text-slate-500 leading-relaxed">
+                One-click downloads for headless Chrome PDF printouts and structured Microsoft Word (.docx) formats.
               </p>
             </div>
-            <div class="pt-3.5">
-              <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-100">
-                <i class="fa-solid fa-check text-[10px]"></i> ATS Engine Compliant
+            <div class="pt-2">
+              <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">
+                <i class="fa-solid fa-check text-[8px]"></i> ATS Engine Compliant
               </span>
             </div>
           </div>
@@ -1033,8 +1041,8 @@
         </section>
 
         <!-- Trust Badges Footer -->
-        <footer class="pt-6 mt-4 border-t border-slate-200/70 flex flex-wrap items-center justify-between gap-3 text-slate-500 text-xs">
-          <div class="flex items-center gap-5 sm:gap-7 flex-wrap">
+        <footer class="pt-3 mt-2 border-t border-slate-200/70 flex flex-wrap items-center justify-between gap-2 text-slate-500 text-[11px] shrink-0">
+          <div class="flex items-center gap-4 sm:gap-6 flex-wrap">
             <span class="inline-flex items-center gap-1.5 font-medium">
               <i class="fa-solid fa-check-double text-emerald-600 text-xs"></i>
               <span>ATS Parser Optimized</span>
