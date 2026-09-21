@@ -1,195 +1,108 @@
 # Resume Studio 📄✨
 
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org)
-[![ATS Calibrated](https://img.shields.io/badge/ATS%20Calibration-2026%20Gold%20Standard-success)](#ats-calibration)
-[![Offline First](https://img.shields.io/badge/Storage-Local%20First%20%7C%20Zero%20Tracking-orange)](#privacy--offline-first)
-[![Netlify Deploy](https://img.shields.io/badge/Deploy-Netlify%20Ready-00C7B7)](https://www.netlify.com)
+### ATS-Calibrated Executive Resume Studio & Career Document Engine
 
-> **Resume Studio** is a local-first, privacy-focused Resume & Profile Management Studio calibrated for modern **Applicant Tracking Systems (ATS)**. It features an interactive WYSIWYG dual-page A4 canvas, drag-and-drop section reordering, and multi-format document generation for **100% Vector PDF**, genuine **Microsoft Word (`.docx`)**, **Markdown (`.md`)**, **Plain Text (`.txt`)**, and **JSON (`.json`)**.
-
----
-
-## 🌟 Key Features
-
-* **🎯 ATS 2026 Gold Standard Calibration:** Formatted with standardized typography (Arial / Helvetica, 8.9pt font, 1.28 line height), tight horizontal rule dividers, proper bullet indentations, and explicit section keywords recognized by enterprise ATS parsers (Workday, Greenhouse, Lever, Taleo, iCIMS).
-* **📄 Strict A4 2-Page Standard:** Visual page boundaries with dynamic overflow handling. If a section overflows Page 1, it flows smoothly to Page 2 without duplicating section headings.
-* **🖱️ Interactive WYSIWYG Canvas:**
-  * **Click-to-Edit:** Click any section on the canvas to open the focused right-side contextual drawer.
-  * **Drag-and-Drop Reordering:** Drag sections or individual job positions, projects, and skills to rearrange your resume hierarchy on the fly.
-  * **Fit Budget Meter:** Real-time percentage indicator showing page capacity consumption per page.
-  * **Direct Inline Heading Editing:** Edit section titles directly on the canvas or from the drawer.
-* **📦 Multi-Format Document Generation Engine:**
-  * **Print-Ready Vector PDF:** Generates clean, crisp vector PDFs with selectable text, clickable hyperlinks, and zero trailing blank pages via browser print or headless Chromium/Edge.
-  * **Native Microsoft Word (`.docx`):** Uses OpenXML standards (`docx` library) to create genuine Word documents matching ATS margins (0.35" top/bottom, 0.45" left/right) and font hierarchies.
-  * **Plain Text & Markdown:** Instant export for rapid copy-pasting into ATS textarea fields.
-  * **JSON Single Source of Truth:** Import and export your entire resume model (`resume-data.json`) with zero loss.
-* **🔒 Privacy & Local-First:** Your sensitive resume data never leaves your computer. All edits are automatically saved to your browser's local storage database and synced dynamically.
-* **⚡ Zero Heavy Dependencies:** Built with pure Vanilla ES6+ JavaScript, Tailwind CSS, and lightweight native Node.js HTTP server.
+[![Live Application](https://img.shields.io/badge/🚀_Launch_Live_App-resume--studio--editor.netlify.app-00C7B7?style=for-the-badge)](https://resume-studio-editor.netlify.app/)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
+[![ATS Gold Standard](https://img.shields.io/badge/ATS%20Calibration-2026%20MNC%20Standard-success?style=for-the-badge)](#-why-resume-studio)
+[![100% Private](https://img.shields.io/badge/Privacy-100%25%20Device--Local%20%7C%20Zero%20API-orange?style=for-the-badge)](#-100-device-local-privacy)
 
 ---
 
-## 🚀 Quick Start
+## 🌐 Live Web Experience
 
-### Prerequisites
+Open, edit, and export your resume in under 5 minutes directly in your browser:
 
-* [Node.js](https://nodejs.org/) (version 18.0.0 or higher)
-* Windows, macOS, or Linux
+### 👉 **[https://resume-studio-editor.netlify.app/](https://resume-studio-editor.netlify.app/)**
 
-### Installation
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/bhx20/Resume-Studio.git
-cd Resume-Studio
-
-# 2. Install dependencies
-npm install
-
-# 3. Start the studio
-npm start
-```
-
-### Windows One-Click Launch
-
-Double-click [`start.bat`](start.bat) in the project root to start the server and automatically launch the studio in your default browser at `http://localhost:3000`.
+*Zero account registration, zero cloud storage, zero tracking. Your data never leaves your device.*
 
 ---
 
-## 🛠️ Available Scripts
+## 🖼️ Studio Showcase
 
-| Command | Description |
-| :--- | :--- |
-| `npm start` | Starts the local HTTP application server on port `3000`. |
-| `npm run dev` | Runs development server. |
-| `npm test` | Executes the integration test suite (validates data models, HTML escaping, DOCX buffers, and static server). |
-| `npm run build` | Compiles client assets and generates `dist/` with Netlify `_redirects` for production deployment. |
+<div align="center">
+  <img src="src/client/assets/1.png" alt="Resume Studio Welcome Screen & Studio Experience" width="100%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12); margin-bottom: 24px;" />
+  <p><em>Studio Onboarding Screen — Streamlined 5-minute update workflow, 100% device-local privacy, and MNC-targeted ATS architecture.</em></p>
+</div>
 
----
+<br/>
 
-## 🏛️ Project Architecture
-
-```
-Resume-Studio/
-├── src/
-│   ├── client/                  # Frontend Web Application (Vanilla JS + Tailwind CSS)
-│   │   ├── js/
-│   │   │   ├── editors/         # Modular section editors
-│   │   │   │   ├── editor-core.js     # Drawer controls, tab switching, headings
-│   │   │   │   ├── exp-editor.js      # Experience editor & compact reordering
-│   │   │   │   ├── proj-editor.js     # Projects editor & compact reordering
-│   │   │   │   ├── skills-editor.js   # Skills matrix editor & reordering
-│   │   │   │   ├── edu-editor.js      # Education & credentials editor
-│   │   │   │   └── custom-editor.js   # Dynamic custom sections editor
-│   │   │   ├── canvas.js        # Multi-page A4 canvas renderer & overflow pagination
-│   │   │   ├── db.js            # Local database persistence, auto-save & JSON I/O
-│   │   │   ├── state.js         # Reactive global state management
-│   │   │   ├── toolbar.js       # Zoom, print, DOCX, Markdown, plain text exports
-│   │   │   └── utils.js         # String escaping (XSS defense), formatting, alerts
-│   │   ├── app.js               # Frontend bootstrap and entry point
-│   │   └── index.html           # Single-page application shell
-│   ├── config/
-│   │   ├── defaultResume.js     # Fallback resume template
-│   │   └── index.js             # Environment configuration & MIME types
-│   ├── data/
-│   │   └── resume-data.json     # Master single source of truth data model
-│   ├── generators/              # Multi-format document generation engine
-│   │   ├── docx.generator.js    # OpenXML Word (.docx) generator
-│   │   ├── html.generator.js    # Calibrated ATS HTML generator (XSS hardened)
-│   │   ├── pdf.generator.js     # Cross-platform headless browser vector PDF generator
-│   │   └── text.generator.js    # Markdown & plain text generators
-│   ├── server.js                # Native Node.js static HTTP server
-│   └── utils/
-│       └── helpers.js           # Shared ATS formatting & tolerant normalization
-├── scripts/
-│   └── build.js                 # Production build script for static hosting
-├── tests/
-│   └── resume.test.js           # Comprehensive integration & test suite
-├── netlify.toml                 # Netlify deployment configuration
-├── package.json                 # Project dependencies & metadata
-├── start.bat                    # Windows one-click starter
-└── LICENSE                      # Apache 2.0 Open Source License
-```
+<div align="center">
+  <img src="src/client/assets/2.png" alt="Resume Studio Dual-Page A4 Canvas & Real-Time Editor" width="100%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);" />
+  <p><em>Interactive Dual-Page A4 Studio Canvas — Precision typography, dynamic section editing drawer, real-time page budget meter, and instant export tools.</em></p>
+</div>
 
 ---
 
-## 🌐 Deploying to Netlify
+## 🌟 Why Resume Studio?
 
-Resume Studio is pre-configured for automated deployment on [Netlify](https://www.netlify.com):
+Most automated resume builders rely on rigid cloud servers, store your confidential career details in remote databases, and generate bloated layouts that fail modern automated hiring algorithms.
 
-1. Fork or push this repository to your GitHub account.
-2. Link your repository in the Netlify Dashboard.
-3. Netlify automatically detects settings from [`netlify.toml`](netlify.toml):
-   * **Build command:** `npm run build`
-   * **Publish directory:** `dist`
-   * **Functions directory:** `netlify/functions`
-4. Click **Deploy Site** — your studio will be live with full client-side editing, local persistence, and serverless download capabilities!
+**Resume Studio** was engineered from the ground up to solve these problems with three core principles:
 
----
+1. **Precision ATS Calibration for Top Global MNCs**:
+   - Calibrated specifically for Workday, Greenhouse, Lever, Taleo, and iCIMS enterprise screening parsers used by Fortune 500 multinationals and tech leaders.
+   - Uses standardized ATS typography (Arial / Helvetica hierarchies, 8.9pt body, 1.28 line height, structured dividers) that parses cleanly without dropped content.
 
-## 🧩 Data Model (`resume-data.json`)
+2. **Strict Dual-Page A4 Standard & Flow Budgeting**:
+   - Visually simulated print canvas adhering strictly to international A4 dimensions.
+   - Dynamic overflow prevention guarantees zero awkward orphan headers, zero accidental blank trailing pages, and seamless flow across pages.
 
-Resume Studio uses a clean JSON schema:
-
-```json
-{
-  "personal": {
-    "name": "Candidate Name",
-    "title": "Target Role Title",
-    "location": "City, State, Country",
-    "phone": "+1 555-0100",
-    "email": "candidate@example.com",
-    "linkedin": "https://linkedin.com/in/username",
-    "github": "https://github.com/username"
-  },
-  "summary": "Executive summary paragraph...",
-  "skills": [
-    { "category": "Languages", "skills": "Dart, TypeScript, SQL" }
-  ],
-  "experience": [
-    {
-      "company": "Company Name",
-      "role": "Lead Engineer",
-      "period": "2022 – Present",
-      "location": "City, State",
-      "bullets": [
-        "Accomplished [Impact], measured by [Metric], by engineering [Feature]."
-      ]
-    }
-  ],
-  "projects": [],
-  "education": [],
-  "achievements": [],
-  "customSections": []
-}
-```
+3. **100% Device-Local Privacy (Zero-API Architecture)**:
+   - Your sensitive personal and employment data never travels over the internet.
+   - All persistence is maintained exclusively inside your browser's private local storage.
+   - Document generation runs completely in-browser without third-party servers or external APIs.
 
 ---
 
-## 🔒 Privacy & Offline-First
+## ⚡ Key Highlights & Capabilities
 
-* **No Analytics or Trackers:** Zero third-party telemetry, ads, or cookies.
-* **Client-Side Persistence:** When running online or offline, all modifications are saved in your browser's `localStorage`.
-* **Export Anytime:** Download your JSON file at any time via **Export JSON** to backup or transfer between computers.
+- **Interactive WYSIWYG Dual-Page Canvas**:
+  - Click any section to open the focused right-side contextual editing drawer.
+  - Real-time live synchronization between form inputs and the high-resolution print canvas.
+  - Floating precision zoom controls with one-click 100% scale reset.
 
----
+- **Drag-and-Drop Section Hierarchy**:
+  - Reorder entire sections on the fly to highlight what matters most for each job application.
+  - Compact list views with drag handles for seamless reordering of experience, projects, skills, and credentials.
 
-## 🤝 Contributing
+- **Dynamic ATS Section Headings**:
+  - Tailor section titles directly to match specific job description keywords (e.g. *Executive Profile*, *Technical Skills Matrix*, *Key Projects & Deliverables*).
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [Issues page](https://github.com/bhx20/Resume-Studio/issues).
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'feat: Add AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📜 License
-
-Distributed under the **Apache License 2.0**. See [`LICENSE`](LICENSE) for more information.
+- **Multi-Format Export Engine**:
+  - **100% Vector PDF**: Razor-sharp, vector-rendered print PDF with selectable text, clickable hyperlinks, and exact printer margins.
+  - **Microsoft Word (.doc)**: Native Word document export with clean structural headings and bullet points.
+  - **Plain Text & Markdown**: Instant one-click plain text and Markdown exports for rapid pasting into ATS application textareas.
+  - **JSON Master Model**: Seamless one-click backup and restoration of your entire career data model.
 
 ---
 
-**Author:** [Sanket Kalathiya](https://github.com/bhx20)
+## 🤝 Calling All Developers, Designers & ATS Enthusiasts!
+
+**Resume Studio** is an open-source project and community collaboration is warmly encouraged. Whether you have fresh ideas, design proposals, or want to contribute to the codebase, **your input is enthusiastically welcomed!**
+
+### 💡 How You Can Help Shape Resume Studio:
+- **Share New Ideas & Feature Requests**: Have an idea for a new section type, layout feature, or ATS optimization? Open an issue on GitHub to kick off the discussion.
+- **UI/UX & Design Enhancements**: Help us make the studio interface even smoother, more intuitive, and accessible.
+- **ATS Keyword & Parser Research**: Share insights, parser test results, or feedback from modern hiring pipelines to keep our templates ranking at the top.
+- **Template & Theme Variations**: Propose new clean, ATS-compliant typographic variations (e.g. Modern Sans vs. Classic Executive Serif).
+- **Code Contributions**: Submit pull requests for bug fixes, performance improvements, and frontend enhancements.
+
+### 📬 Get Involved:
+- **Submit Ideas & Feedback**: [GitHub Issues Page](https://github.com/bhx20/Resume-Studio/issues)
+- **Start a Conversation**: Open a feature suggestion ticket or join repository discussions.
+- **Star the Repository**: If you find Resume Studio useful, give it a star on GitHub to help more job seekers discover it!
+
+---
+
+## 📜 Open-Source License
+
+This project is licensed under the **Apache License 2.0**. You are free to use, modify, distribute, and build upon this software according to the terms of the license.
+
+---
+
+<div align="center">
+  <p>Crafted with pride for software engineers, tech professionals, and creators worldwide.</p>
+  <p><strong><a href="https://resume-studio-editor.netlify.app/">Launch Resume Studio Live →</a></strong></p>
+</div>
