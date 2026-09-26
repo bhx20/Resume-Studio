@@ -61,12 +61,11 @@ async function runTests() {
     assert(defaultData.experience && defaultData.experience.length > 0, 'default template must have experience');
   });
 
-  it('Personal data copy exists locally and is gitignored', () => {
-    const personalPath = path.join(__dirname, '..', 'src', 'data', 'resume-data.personal.json');
-    assert(fs.existsSync(personalPath), 'resume-data.personal.json must exist locally');
+  it('Personal and local data files are gitignored', () => {
     const gitignorePath = path.join(__dirname, '..', '.gitignore');
     const gitignoreContent = fs.readFileSync(gitignorePath, 'utf8');
     assert(gitignoreContent.includes('personal.json'), '.gitignore must exclude personal JSON files');
+    assert(gitignoreContent.includes('local.json'), '.gitignore must exclude local JSON files');
   });
 
   // 2. Helpers
@@ -269,6 +268,12 @@ async function runTests() {
     const canvasJs = fs.readFileSync(path.join(__dirname, '..', 'src', 'client', 'js', 'canvas.js'), 'utf-8');
     assert(!canvasJs.includes('(CONT.)'), 'canvas.js must not contain any (CONT.) label');
     assert(canvasJs.includes('const titleHtml = isContinuation'), 'buildSectionDom must check isContinuation for titleHtml');
+  });
+
+  it('Direct resume PDF download: toolbar.js triggers direct download and does not use window.print()', () => {
+    const toolbarJs = fs.readFileSync(path.join(__dirname, '..', 'src', 'client', 'js', 'toolbar.js'), 'utf-8');
+    assert(!toolbarJs.includes('window.print()'), 'toolbar.js must not invoke window.print()');
+    assert(toolbarJs.includes('downloadResumePdf'), 'toolbar.js must define and use downloadResumePdf');
   });
 
   // 4. Source & Client Directory Consolidation

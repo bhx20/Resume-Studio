@@ -206,6 +206,19 @@ function normalizeResumeData(raw) {
 }
 window.normalizeResumeData = normalizeResumeData;
 
+function hasResumeContent(data) {
+  if (!data || typeof data !== 'object') return false;
+  const p = data.personal;
+  const hasName = Boolean(p && typeof p.name === 'string' && p.name.trim().length > 0);
+  const hasSkills = Boolean(Array.isArray(data.skills) && data.skills.length > 0);
+  const hasExp = Boolean(Array.isArray(data.experience) && data.experience.length > 0);
+  const hasProj = Boolean(Array.isArray(data.projects) && data.projects.length > 0);
+  const hasSummary = Boolean(typeof data.summary === 'string' && data.summary.trim().length > 0);
+  const hasEdu = Boolean(Array.isArray(data.education) && data.education.length > 0);
+  return hasName && (hasSkills || hasExp || hasProj || hasSummary || hasEdu);
+}
+window.hasResumeContent = hasResumeContent;
+
 function getCandidateFilename(data, ext) {
   const p = data?.personal || {};
   const rawName = p.name || 'Resume';
