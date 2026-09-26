@@ -44,6 +44,7 @@ declare function showToast(message: string): void;
 declare function selectAndOpenSection(secId: string): void;
 declare function syncActiveFormFields(): void;
 declare function downloadWordHtml(data: any): void;
+declare function downloadResumePdf(data?: any): Promise<void>;
 
 declare function getValidSectionOrder(): string[];
 declare function renderPages(): void;

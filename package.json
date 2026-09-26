@@ -4,9 +4,9 @@
   "description": "Production-ready, ATS-calibrated 2-page resume studio and document generation engine",
   "main": "src/server.js",
   "scripts": {
-    "build": "node scripts/build.js",
-    "start": "node src/server.js",
-    "dev": "node src/server.js",
+    "build": "node init && node scripts/build.js",
+    "start": "node init && node src/server.js",
+    "dev": "node init && node src/server.js",
     "test": "node tests/resume.test.js"
   },
   "repository": {
