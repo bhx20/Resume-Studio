@@ -135,7 +135,7 @@
     {
       target: '#btn-download-pdf',
       title: 'Export to PDF & Word Docs',
-      description: 'Export print-ready, high-resolution vector PDFs via server-side headless Chrome, or download fully editable Microsoft Word (.docx) documents with one click!',
+      description: 'Directly download high-resolution, print-ready PDF resumes to your device, or download fully editable Microsoft Word (.doc) documents with one click!',
       placement: 'bottom',
       pad: 8,
       cardAlign: 'center',

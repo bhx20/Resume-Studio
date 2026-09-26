@@ -239,17 +239,25 @@ function renderPages() {
 
   const eduHtmlList = (resumeData.education || []).map(edu => formatEducationHtml(edu, escapeHtml));
 
+  const contactParts = [
+    p.location ? escapeHtml(p.location) : '',
+    p.phone ? escapeHtml(p.phone) : '',
+    p.email ? `<a href="mailto:${escapeHtml(p.email)}">${escapeHtml(p.email)}</a>` : ''
+  ].filter(Boolean);
+
+  const cleanUrl = (u) => String(u || '').replace(/^https?:\/\//i, '');
+  const socialParts = [
+    p.linkedin ? `LinkedIn: <a href="${escapeHtml(p.linkedin)}" target="_blank">${escapeHtml(cleanUrl(p.linkedin))}</a>` : '',
+    p.github ? `GitHub: <a href="${escapeHtml(p.github)}" target="_blank">${escapeHtml(cleanUrl(p.github))}</a>` : ''
+  ].filter(Boolean);
+
   const headerHtml = `
     <header class="resume-section" data-section-id="personal" title="Click to edit personal information">
       <span class="section-edit-badge"><i class="fa-solid fa-pen text-[8px] mr-1"></i>Edit</span>
-      <h1>${escapeHtml(p.name || 'Sanket Kalathiya')}</h1>
-      <div class="subtitle">${escapeHtml(p.title || 'Lead Flutter Developer & Mobile Architect | Multi-Platform (Mobile & Web)')}</div>
-      <div class="contact-line">
-        ${escapeHtml(p.location || '')} | ${escapeHtml(p.phone || '')} | <a href="mailto:${escapeHtml(p.email || '')}">${escapeHtml(p.email || '')}</a>
-      </div>
-      <div class="contact-line">
-        LinkedIn: <a href="${escapeHtml(p.linkedin || '')}" target="_blank">${escapeHtml((p.linkedin || '').replace(/^https?:\/\//, ''))}</a> | GitHub: <a href="${escapeHtml(p.github || '')}" target="_blank">${escapeHtml((p.github || '').replace(/^https?:\/\//, ''))}</a>
-      </div>
+      <h1>${escapeHtml(p.name || '')}</h1>
+      ${p.title ? `<div class="subtitle">${escapeHtml(p.title)}</div>` : ''}
+      ${contactParts.length ? `<div class="contact-line">${contactParts.join(' | ')}</div>` : ''}
+      ${socialParts.length ? `<div class="contact-line">${socialParts.join(' | ')}</div>` : ''}
     </header>
   `;
 

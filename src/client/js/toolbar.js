@@ -302,6 +302,130 @@ function downloadFile(filename, content, type) {
   URL.revokeObjectURL(url);
 }
 
+async function downloadResumePdf(data) {
+  const resumeModel = data || window.resumeData || {};
+  const fileName = typeof getCandidateFilename === 'function'
+    ? getCandidateFilename(resumeModel, 'pdf')
+    : 'Resume.pdf';
+
+  const pages = Array.from(document.querySelectorAll('.resume-document-page'));
+  if (!pages || pages.length === 0) {
+    if (typeof showToast === 'function') showToast('No resume pages available to export.');
+    return;
+  }
+
+  // Ensure active form edits are synchronized and saved to local storage
+  if (typeof syncActiveFormFields === 'function') syncActiveFormFields();
+  if (typeof LocalResumeDatabase !== 'undefined' && typeof LocalResumeDatabase.save === 'function') {
+    LocalResumeDatabase.save(resumeModel);
+  }
+
+  const btn = document.getElementById('btn-download-pdf') || document.getElementById('btn-print');
+  const originalHtml = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-rose-600"></i><span>Downloading...</span>`;
+  }
+
+  if (typeof showToast === 'function') {
+    showToast('Preparing direct resume PDF download...');
+  }
+
+  try {
+    // If html2pdf is not loaded yet, attempt dynamic CDN fallback
+    if (typeof html2pdf === 'undefined') {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        script.onload = resolve;
+        script.onerror = () => reject(new Error('Failed to load PDF generation library'));
+        document.head.appendChild(script);
+      });
+    }
+
+    if (typeof html2pdf === 'undefined') {
+      throw new Error('PDF generator library is not available.');
+    }
+
+    // Step 1: Initialize worker to obtain calibrated A4 jsPDF instance
+    const initWorker = html2pdf().set({
+      margin: 0,
+      filename: fileName,
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    });
+    const dummy = document.createElement('div');
+    dummy.style.width = '210mm';
+    dummy.style.height = '10px';
+    await initWorker.from(dummy).toPdf();
+    const pdf = initWorker.prop.pdf;
+
+    // Step 2: Render each .resume-document-page individually and attach to the PDF
+    for (let i = 0; i < pages.length; i++) {
+      const page = pages[i];
+      const pageRect = page.getBoundingClientRect();
+      const clone = page.cloneNode(true);
+      clone.style.transform = 'none';
+      clone.style.boxShadow = 'none';
+      clone.style.margin = '0';
+      clone.style.width = '210mm';
+      clone.style.height = '297mm';
+      clone.style.minHeight = '297mm';
+      clone.style.maxHeight = '297mm';
+      clone.querySelectorAll('.no-print, .section-drag-handle, .section-edit-badge, .page-break-marker').forEach(el => el.remove());
+
+      const pageWorker = html2pdf().set({
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        image: { type: 'jpeg', quality: 0.98 }
+      });
+      await pageWorker.from(clone).toCanvas();
+      const canvas = pageWorker.prop.canvas;
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+      if (i === 0) {
+        pdf.setPage(1);
+        pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+      } else {
+        pdf.addPage('a4', 'portrait');
+        pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+      }
+
+      // Add clickable hyperlinks for this page
+      if (typeof pdf.link === 'function') {
+        const links = page.querySelectorAll('a[href]');
+        links.forEach(link => {
+          const href = link.getAttribute('href');
+          if (href && !href.startsWith('#')) {
+            const linkRect = link.getBoundingClientRect();
+            if (pageRect.width > 0 && pageRect.height > 0) {
+              const x_mm = ((linkRect.left - pageRect.left) / pageRect.width) * 210;
+              const y_mm = ((linkRect.top - pageRect.top) / pageRect.height) * 297;
+              const w_mm = (linkRect.width / pageRect.width) * 210;
+              const h_mm = (linkRect.height / pageRect.height) * 297;
+              pdf.link(x_mm, y_mm, w_mm, h_mm, { url: href });
+            }
+          }
+        });
+      }
+    }
+
+    // Step 3: Trigger direct browser download without opening any print view
+    pdf.save(fileName);
+    if (typeof showToast === 'function') {
+      showToast(`Downloaded ${fileName}!`);
+    }
+  } catch (err) {
+    console.error('[PDF Generation Error]:', err);
+    if (typeof showToast === 'function') {
+      showToast('Could not download PDF directly. Please try again.');
+    }
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
+    }
+  }
+}
+
 function downloadWordHtml(data) {
   const p = data.personal || {};
 
@@ -464,25 +588,44 @@ function setupToolbarActions() {
   async function openDefaultDataModal() {
     if (!defaultDataModal || !defaultDataJson) return;
 
-    let sampleTemplate = null;
-    try {
-      const res = await fetch('/data/resume-data.json');
-      if (res.ok) {
-        sampleTemplate = await res.json();
-      }
-    } catch (_) {}
+    // Priority 1: User's saved custom default template (must have real resume content)
+    const rawSaved = (typeof LocalResumeDatabase !== 'undefined' && typeof LocalResumeDatabase.getDefault === 'function')
+      ? LocalResumeDatabase.getDefault()
+      : null;
+    const savedDefault = (rawSaved && (typeof hasResumeContent === 'function' ? hasResumeContent(rawSaved) : (rawSaved.personal && rawSaved.personal.name)))
+      ? rawSaved
+      : null;
 
-    if (!sampleTemplate) {
+    // Priority 2: User's active resume data currently loaded in the studio (must have real resume content)
+    const currentStudio = (typeof resumeData !== 'undefined' && resumeData) ? resumeData : (window.resumeData || null);
+    const activeData = (currentStudio && (typeof hasResumeContent === 'function' ? hasResumeContent(currentStudio) : (currentStudio.personal && currentStudio.personal.name)))
+      ? currentStudio
+      : null;
+
+    // Fallback template if neither exists
+    let sampleTemplate = null;
+    if (!savedDefault && !activeData) {
       try {
-        const res = await fetch('data/resume-data.json');
+        const res = await fetch('/data/resume-data.json');
         if (res.ok) {
-          sampleTemplate = await res.json();
+          const parsed = await res.json();
+          if (typeof hasResumeContent === 'function' ? hasResumeContent(parsed) : (parsed && parsed.personal)) {
+            sampleTemplate = parsed;
+          }
         }
       } catch (_) {}
-    }
 
-    if (!sampleTemplate && window.DEFAULT_RESUME_DATA && window.DEFAULT_RESUME_DATA.personal && !window.DEFAULT_RESUME_DATA.personal.name.includes('Sanket')) {
-      sampleTemplate = window.DEFAULT_RESUME_DATA;
+      if (!sampleTemplate) {
+        try {
+          const res = await fetch('data/resume-data.json');
+          if (res.ok) {
+            const parsed = await res.json();
+            if (typeof hasResumeContent === 'function' ? hasResumeContent(parsed) : (parsed && parsed.personal)) {
+              sampleTemplate = parsed;
+            }
+          }
+        } catch (_) {}
+      }
     }
 
     const fallback = {
@@ -505,7 +648,12 @@ function setupToolbarActions() {
       education: []
     };
 
-    const currentValue = sampleTemplate ? JSON.stringify(sampleTemplate, null, 2) : JSON.stringify(fallback, null, 2);
+    const dataToDisplay = savedDefault || activeData || sampleTemplate || fallback;
+    const currentValue = JSON.stringify(dataToDisplay, null, 2);
+
+    if ('value' in defaultDataJson) {
+      defaultDataJson.value = currentValue;
+    }
     defaultDataJson.textContent = currentValue;
     defaultDataJson.style.height = '52vh';
     defaultDataJson.style.maxHeight = '55vh';
@@ -538,22 +686,52 @@ function setupToolbarActions() {
       defaultDataInfo.setAttribute('aria-expanded', String(!isHidden));
     };
   }
-  if (defaultDataCopy && defaultDataJson) {
+  if (defaultDataCopy) {
     defaultDataCopy.onclick = async () => {
-      const value = (defaultDataJson.textContent || '').trim();
-      if (!value) return;
+      let sample = null;
       try {
-        await navigator.clipboard.writeText(value);
-      } catch (err) {
-        const selection = window.getSelection();
-        const range = document.createRange();
-        range.selectNodeContents(defaultDataJson);
-        selection.removeAllRanges();
-        selection.addRange(range);
-        document.execCommand('copy');
-        selection.removeAllRanges();
+        const res = await fetch('/data/resume-data.json');
+        if (res.ok) sample = await res.json();
+      } catch (_) {}
+      if (!sample) {
+        try {
+          const res = await fetch('data/resume-data.json');
+          if (res.ok) sample = await res.json();
+        } catch (_) {}
       }
-      showToast('Sample JSON copied. Change your data, paste it here, then save as default.');
+      if (!sample) {
+        sample = {
+          personal: {
+            name: 'Alex Morgan',
+            title: 'Staff Software Engineer & Cloud Architect | Distributed Systems',
+            location: 'San Francisco, CA',
+            phone: '+1 (555) 019-2834',
+            email: 'alex.morgan.dev@example.com',
+            linkedin: 'https://www.linkedin.com/in/alex-morgan-sample',
+            github: 'https://github.com/alex-morgan-sample'
+          },
+          summary: 'Staff Software Engineer & Cloud Architect with 8+ years of experience designing, scaling, and deploying high-availability distributed systems.',
+          skills: [
+            { category: 'Languages & Runtimes', skills: 'Go, TypeScript, JavaScript (Node.js), Python, Java, SQL' },
+            { category: 'Cloud & Infrastructure', skills: 'AWS, GCP, Docker, Kubernetes, Terraform, Helm' }
+          ],
+          experience: [],
+          projects: [],
+          education: []
+        };
+      }
+      const sampleText = JSON.stringify(sample, null, 2);
+      try {
+        await navigator.clipboard.writeText(sampleText);
+      } catch (err) {
+        const ta = document.createElement('textarea');
+        ta.value = sampleText;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      showToast('Sample JSON template copied to clipboard!');
     };
   }
   if (defaultDataCancel) defaultDataCancel.onclick = closeDefaultDataModal;
@@ -566,18 +744,23 @@ function setupToolbarActions() {
   if (defaultDataSave) {
     defaultDataSave.onclick = async () => {
       if (!defaultDataJson) return;
-      const raw = (defaultDataJson.textContent || '').trim();
+      let raw = (defaultDataJson.value !== undefined ? defaultDataJson.value : (defaultDataJson.textContent || '')).trim();
       if (!raw) {
         alert('Paste or add a valid JSON object before saving.');
         return;
       }
+      // Sanitize non-breaking spaces and formatting artifacts that often accompany pasted JSON
+      raw = raw.replace(/\u00a0/g, ' ');
       try {
         const parsed = JSON.parse(raw);
         if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
           throw new Error('The default resume data must be a JSON object.');
         }
+        if (typeof hasResumeContent === 'function' && !hasResumeContent(parsed)) {
+          throw new Error('The JSON does not contain sufficient resume content (candidate name or sections are missing). Please provide a populated resume object.');
+        }
         const normalized = normalizeResumeData(parsed);
-        if (!normalized || typeof normalized !== 'object') {
+        if (!normalized || typeof normalized !== 'object' || (typeof hasResumeContent === 'function' && !hasResumeContent(normalized))) {
           throw new Error('The JSON does not contain usable resume data.');
         }
         if (!LocalResumeDatabase.saveDefault(normalized)) {
@@ -586,6 +769,7 @@ function setupToolbarActions() {
         DEFAULT_RESUME_DATA = normalized;
         window.DEFAULT_RESUME_DATA = normalized;
         resumeData = normalized;
+        window.resumeData = normalized;
         LocalResumeDatabase.save(resumeData);
         populateForm();
         renderPages();
@@ -711,14 +895,13 @@ function setupToolbarActions() {
     };
   }
 
-  // Download PDF (100% Vector PDF via browser print engine)
+  // Download PDF (Direct download without print view)
   const btnDownloadPdf = document.getElementById('btn-download-pdf') || document.getElementById('btn-print');
   if (btnDownloadPdf) {
     btnDownloadPdf.onclick = () => {
       syncActiveFormFields();
       LocalResumeDatabase.save(resumeData);
-      showToast('Opening print dialog for Vector PDF...');
-      window.print();
+      downloadResumePdf(resumeData);
     };
   }
 
@@ -852,5 +1035,6 @@ window.stopAutoScroll = stopAutoScroll;
 window.buildMarkdown = buildMarkdown;
 window.buildPlainText = buildPlainText;
 window.downloadFile = downloadFile;
+window.downloadResumePdf = downloadResumePdf;
 window.downloadWordHtml = downloadWordHtml;
 window.setupToolbarActions = setupToolbarActions;
