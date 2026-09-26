@@ -58,10 +58,11 @@ window.LocalResumeDatabase = LocalResumeDatabase;
 // Asynchronously loads default data directly from static data files
 async function loadDefaultSourceData() {
   const localDefault = LocalResumeDatabase.getDefault();
-  if (localDefault && localDefault.personal && localDefault.personal.name && !localDefault.personal.name.includes('Sanket')) {
-    DEFAULT_RESUME_DATA = localDefault;
-    window.DEFAULT_RESUME_DATA = localDefault;
-    return normalizeResumeData(localDefault);
+  if (localDefault && (typeof hasResumeContent === 'function' ? hasResumeContent(localDefault) : (localDefault.personal && localDefault.personal.name))) {
+    const norm = normalizeResumeData(localDefault);
+    DEFAULT_RESUME_DATA = norm;
+    window.DEFAULT_RESUME_DATA = norm;
+    return norm;
   }
 
   const candidatePaths = [
@@ -75,25 +76,53 @@ async function loadDefaultSourceData() {
       const res = await fetch(p);
       if (res.ok) {
         const parsed = await res.json();
-        DEFAULT_RESUME_DATA = parsed;
-        window.DEFAULT_RESUME_DATA = parsed;
-        return normalizeResumeData(parsed);
+        if (typeof hasResumeContent === 'function' ? hasResumeContent(parsed) : (parsed && parsed.personal)) {
+          const norm = normalizeResumeData(parsed);
+          DEFAULT_RESUME_DATA = norm;
+          window.DEFAULT_RESUME_DATA = norm;
+          return norm;
+        }
       }
     } catch (_) {}
   }
 
-  return DEFAULT_RESUME_DATA ? normalizeResumeData(DEFAULT_RESUME_DATA) : {};
+  const fallback = {
+    personal: {
+      name: 'Alex Morgan',
+      title: 'Staff Software Engineer & Cloud Architect | Distributed Systems',
+      location: 'San Francisco, CA',
+      phone: '+1 (555) 019-2834',
+      email: 'alex.morgan.dev@example.com',
+      linkedin: 'https://www.linkedin.com/in/alex-morgan-sample',
+      github: 'https://github.com/alex-morgan-sample'
+    },
+    summary: 'Staff Software Engineer & Cloud Architect with 8+ years of experience designing, scaling, and deploying high-availability distributed systems.',
+    skills: [
+      { category: 'Languages & Runtimes', skills: 'Go, TypeScript, JavaScript (Node.js), Python, Java, SQL' },
+      { category: 'Cloud & Infrastructure', skills: 'AWS, GCP, Docker, Kubernetes, Terraform, Helm' }
+    ],
+    experience: [],
+    projects: [],
+    education: []
+  };
+
+  const norm = normalizeResumeData(DEFAULT_RESUME_DATA && (typeof hasResumeContent === 'function' ? hasResumeContent(DEFAULT_RESUME_DATA) : DEFAULT_RESUME_DATA.personal) ? DEFAULT_RESUME_DATA : fallback);
+  DEFAULT_RESUME_DATA = norm;
+  window.DEFAULT_RESUME_DATA = norm;
+  return norm;
 }
 
 // Load Data from Browser Local Database (or default source data)
 async function loadData() {
   const localData = LocalResumeDatabase.get();
-  if (localData) {
+  if (localData && (typeof hasResumeContent === 'function' ? hasResumeContent(localData) : (localData.personal && localData.personal.name))) {
     resumeData = normalizeResumeData(localData);
   } else {
+    // If local storage is empty OR corrupted with a blank skeleton, auto-heal from default source data
     resumeData = await loadDefaultSourceData();
     LocalResumeDatabase.save(resumeData);
   }
+  window.resumeData = resumeData;
 
   // Safety check: ensure any erroneous customSection like 'sectionOrder' or 'sectionTitles' is purged
   if (resumeData && Array.isArray(resumeData.customSections)) {
